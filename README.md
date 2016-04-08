@@ -1,18 +1,16 @@
 # Projeto de Sistemas Distribuídos 2015-2016 #
 
-Grupo de SD ... - Campus ...
-*(preencher com número do grupo de SD no Fénix e depois apagar esta linha)*
+Grupo de SD 50 - Campus Taguspark
 
-... ... ...
+Afonso Caetano 82539 afonso.caetano@tecnico.ulisboa.pt
 
-... ... ...
+Bruno Santos 82053 bruno.o.santos@tecnico.ulisboa.pt
 
-... ... ...
-*(preencher com nome, número e email de membro do grupo e depois apagar esta linha)*
+Ricardo Pereira 82010 ricardo.moreira.pereira@tecnico.ulisboa.pt
 
 
 Repositório:
-[tecnico-softeng-distsys-2015/T_XX-project](https://github.com/tecnico-softeng-distsys-2015/T_XX-project/)
+[tecnico-softeng-distsys-2015/T_50-project](https://github.com/tecnico-softeng-distsys-2015/T_50-project/)
 
 -------------------------------------------------------------------------------
 
