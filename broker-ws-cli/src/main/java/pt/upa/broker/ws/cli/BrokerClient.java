@@ -48,8 +48,8 @@ public class BrokerClient {
 		Map<String, Object> requestContext = bindingProvider.getRequestContext();
 		requestContext.put(ENDPOINT_ADDRESS_PROPERTY, endpointAddress);
 
-			String result = port.ping("friend");
-			System.out.println(result);
+		String result = port.ping("friend");
+		System.out.println(result);
 
 		
 	}
