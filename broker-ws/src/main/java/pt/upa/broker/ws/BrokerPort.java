@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
 import javax.jws.WebService;
 
 @WebService(
@@ -18,6 +17,7 @@ import javax.jws.WebService;
 
 public class BrokerPort implements BrokerPortType {
 	
+	private List<TransportView> Transportes = new ArrayList<>();
 	private ArrayList<String> Norte = new ArrayList<>(Arrays.asList("Porto","Braga","Viana do Castelo","Vila Real","Bragança"));
 	private ArrayList<String> Centro = new ArrayList<>(Arrays.asList("Lisboa", "Leiria","Santarem","Castelo Branco","Coimbra","Aveiro","Viseu","Guarda"));
 	private ArrayList<String> Sul = new ArrayList<>(Arrays.asList("Setubal","Evora","Portalegre","Beja","Faro"));
@@ -30,91 +30,82 @@ public class BrokerPort implements BrokerPortType {
 	@Override
 	public String requestTransport(String origin, String destination, int price)
 			throws InvalidPriceFault_Exception, UnavailableTransportFault_Exception,
-			UnavailableTransportPriceFault_Exception, UnknownLocationFault_Exception {
-		
-			if(Norte.contains(origin)){
-				if(Norte.contains(destination) || Centro.contains(destination)){
-					
-				}
-				else if(Sul.contains(destination)){
-					UnavailableTransportFault faultInfo = new UnavailableTransportFault();
-					faultInfo.setOrigin(origin);
-					faultInfo.setDestination(destination);
-					throw new UnavailableTransportFault_Exception("Destino inalcançável", faultInfo);
-				}
-				else {
-					UnknownLocationFault faultInfo = new UnknownLocationFault();
-					faultInfo.setLocation(destination);
-					throw new UnknownLocationFault_Exception("Destino inexistente", faultInfo);
-				}
-			}
+			UnavailableTransportPriceFault_Exception, UnknownLocationFault_Exception{
 			
-			if(Centro.contains(origin)){
-				if(Norte.contains(destination) || Centro.contains(destination) || Sul.contains(destination)){
-					
-				}
-	
-				else {
-					UnknownLocationFault faultInfo = new UnknownLocationFault();
-					faultInfo.setLocation(destination);
-					throw new UnknownLocationFault_Exception("Destino inexistente", faultInfo);
-				}
-			}
-			
-			if(Sul.contains(origin)){
-				if(Sul.contains(destination) || Centro.contains(destination)){
-					
-				}
-				else if(Norte.contains(destination)){
-					UnavailableTransportFault faultInfo = new UnavailableTransportFault();
-					faultInfo.setOrigin(origin);
-					faultInfo.setDestination(destination);
-					throw new UnavailableTransportFault_Exception("Destino inalcançável", faultInfo);
-				}
-				else {
-					UnknownLocationFault faultInfo = new UnknownLocationFault();
-					faultInfo.setLocation(destination);
-					throw new UnknownLocationFault_Exception("Destino inexistente", faultInfo);
-				}
+		if(Norte.contains(origin)){
+			if(Norte.contains(destination) || Centro.contains(destination)){
 				
 			}
-			
-			else {
-				if (Norte.contains(destination) || Centro.contains(destination) || Sul.contains(destination)){
-					UnknownLocationFault faultInfo = new UnknownLocationFault();
-					faultInfo.setLocation(destination);
-					throw new UnknownLocationFault_Exception("Origem inexistente", faultInfo);
-				}
-				else {
-					UnknownLocationFault faultInfo = new UnknownLocationFault();
-					faultInfo.setLocation(destination);
-					throw new UnknownLocationFault_Exception("Origem e destino inexistentes", faultInfo);
-				}
-					
+			else if(Sul.contains(destination)){
+				UnavailableTransportFault faultInfo = new UnavailableTransportFault();
+				faultInfo.setOrigin(origin);
+				faultInfo.setDestination(destination);
+				throw new UnavailableTransportFault_Exception("Destino inalcançável", faultInfo);
+			}
+		}
+		
+		else if(Centro.contains(origin)){
+			if(Norte.contains(destination) || Centro.contains(destination) || Sul.contains(destination)){
+				
+			}
+		}
+		
+		else if(Sul.contains(origin)){
+			if(Sul.contains(destination) || Centro.contains(destination)){
+				/*SC SS*/
+			}
+			else if(Norte.contains(destination)){
+				UnavailableTransportFault faultInfo = new UnavailableTransportFault();
+				faultInfo.setOrigin(origin);
+				faultInfo.setDestination(destination);
+				throw new UnavailableTransportFault_Exception("Destino inalcançável", faultInfo);
 			}
 			
-			
-			return "ola";
-			
+		}
 		
+		try{
+			
+			
+			
+		}catch (BadPriceFault_Exception) {
+			InvalidPriceFault faultInfo = new InvalidPriceFault();
+			faultInfo.setPrice(price);
+			throw new InvalidPriceFault_Exception("Preço inválido",faultInfo);
+		}
+		catch (BadLocationFault_Exception) {
+			UnknownLocationFault faultInfo = new UnknownLocationFault();
+			faultInfo.setLocation(origin);
+			throw new UnknownLocationFault_Exception("Origem/Destino inexistente", faultInfo);
+		}
 		
+		return "ola";
 	}
+		
+		
+	
 
 	@Override
 	public TransportView viewTransport(String id) throws UnknownTransportFault_Exception {
-		// TODO Auto-generated method stub
-		return null;
+		
+		for( TransportView i : Transportes) {
+			if(i.getId().equals(id)) {
+				return i;
+			}
+		}
+		UnknownTransportFault faultInfo = new UnknownTransportFault();
+		faultInfo.setId(id);
+		throw new UnknownTransportFault_Exception("Id não encontrado!", faultInfo);
 	}
 
 	@Override
 	public List<TransportView> listTransports() {
-		// TODO Auto-generated method stub
-		return null;
+	
+		return Transportes;
 	}
 
 	@Override
 	public void clearTransports() {
-		// TODO Auto-generated method stub	
+		Transportes.clear();	
 	}
 }
 	
