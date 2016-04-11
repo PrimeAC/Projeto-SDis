@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.jws.WebService;
 
@@ -52,55 +52,34 @@ public class TransporterPort implements TransporterPortType{
 	public JobView requestJob(String origin, String destination, int price)
 			throws BadLocationFault_Exception, BadPriceFault_Exception {
 		/*COMO OBTER AS TRANSPORTADORAS???????????????*/	
+		int offer=0;
 		if((Locais.get(origin).equals("Norte") || Locais.get(origin).equals("Centro") || Locais.get(origin).equals("Sul"))){
 			if((Locais.get(destination).equals("Norte") || Locais.get(destination).equals("Centro") 
 					|| Locais.get(destination).equals("Sul"))){
 				/*Origem e destino válidos*/
-				if(price<0){
+				if(price<=0){
 					BadPriceFault faultInfo = new BadPriceFault();
 					faultInfo.setPrice(price);
 					throw new BadPriceFault_Exception("Preço inválido",faultInfo);
+				}
+				else if (((Locais.get(origin).equals("Norte") || Locais.get(origin).equals("Norte")) && getId()%2!=0) 
+						|| ((Locais.get(origin).equals("Sul") || Locais.get(origin).equals("Sul")) && getId()%2==0)){
+					return null;
 				}
 				else if (price>100){
 					return null;
 				}
 				else if (price <=10){
-					int offer=random.nextInt(10);
-					JobView job = new JobView();
-					job.setJobPrice(offer);
-					Trabalhos.add(job);
-					return job;	
+					offer=ThreadLocalRandom.current().nextInt(1,10);
 				}
 				else{
-					JobView job= new JobView();
-					if (price %2!=0) {
-						/*nome impar preço impar*/
-						/*COMPANYNAME OU GETCOMPANYNAME????*/
-						if(getId()%2!=0 ){
-							int offer=random.nextInt(price);
-							job.setJobPrice(offer);
-							return job;
-						}
-						else {
-							int High = 100;
-							int offer = random.nextInt(High-price) + price;
-							job.setJobPrice(offer);
-							return job;
-						}
+					if ((price %2!=0 && getId()%2!=0) || (price%2==0 && getId()==0)) {
+						/*nome impar preço impar ou nome par preço par*/
+						offer=ThreadLocalRandom.current().nextInt(1,price);
 					}
-					else{
-						/*nome par preço par*/
-						if(getId()%2==0 ){
-							int offer=random.nextInt(price);
-							job.setJobPrice(offer);
-							return job;
-						}
-						else {
-							int High = 100;
-							int offer = random.nextInt(High-price) + price;
-							job.setJobPrice(offer);
-							return job;
-						}
+					else {
+						/*nome par preço impar ou nome impar preço par*/
+						offer = ThreadLocalRandom.current().nextInt(price+1,101);
 					}
 				}
 			}
@@ -115,6 +94,16 @@ public class TransporterPort implements TransporterPortType{
 			faultInfo.setLocation(origin);
 			throw new BadLocationFault_Exception("Origem inexistente", faultInfo);
 		}
+		
+		JobView job = new JobView();
+		job.setCompanyName("UpaTransporter"+getId());
+		job.setJobOrigin(origin);
+		job.setJobDestination(destination);
+		job.setJobIdentifier("" +getId());
+		job.setJobState(JobStateView.PROPOSED);
+		job.setJobPrice(offer);
+		Trabalhos.add(job);
+		return job;
 	}
 
 	@Override
