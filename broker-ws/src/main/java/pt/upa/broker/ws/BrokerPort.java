@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.jws.WebService;
+import pt.upa.transporter.ws.BadPriceFault_Exception;
+import pt.upa.transporter.ws.BadLocationFault_Exception;
 
 @WebService(
 	    endpointInterface="pt.upa.broker.ws.BrokerPortType",
@@ -62,22 +64,22 @@ public class BrokerPort implements BrokerPortType {
 			}
 			
 		}
-		
+		/*
 		try{
 			
 			
 			
-		}catch (BadPriceFault_Exception) {
+		}catch (BadPriceFault_Exception e) {
 			InvalidPriceFault faultInfo = new InvalidPriceFault();
 			faultInfo.setPrice(price);
 			throw new InvalidPriceFault_Exception("Preço inválido",faultInfo);
 		}
-		catch (BadLocationFault_Exception) {
+		catch (BadLocationFault_Exception e) {
 			UnknownLocationFault faultInfo = new UnknownLocationFault();
 			faultInfo.setLocation(origin);
 			throw new UnknownLocationFault_Exception("Origem/Destino inexistente", faultInfo);
 		}
-		
+		*/
 		return "ola";
 	}
 		

@@ -1,10 +1,17 @@
 package pt.upa.broker;
 
+import static javax.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
+
+import java.util.Map;
+
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Endpoint;
 
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
 import pt.upa.broker.BrokerApplication;
 import pt.upa.broker.ws.BrokerPort;
+import pt.upa.transporter.ws.TransporterPortType;
+import pt.upa.transporter.ws.TransporterService;
 
 public class BrokerApplication {
 
@@ -35,7 +42,22 @@ public class BrokerApplication {
 			System.out.printf("Publishing '%s' to UDDI at %s%n", name, uddiURL);
 			uddiNaming = new UDDINaming(uddiURL);
 			uddiNaming.rebind(name, url);
-
+			
+			// connecting with transporter
+			System.out.printf("Looking for '%s'%n", name);
+			String endpointAddress = uddiNaming.lookup(name);
+			
+			System.out.println("Creating stub ...");
+			TransporterService service = new TransporterService();
+			TransporterPortType port2 = service.getTransporterPort();
+		
+			System.out.println("Setting endpoint address ...");
+			BindingProvider bindingProvider = (BindingProvider) port2;
+			Map<String, Object> requestContext = bindingProvider.getRequestContext();
+			requestContext.put(ENDPOINT_ADDRESS_PROPERTY, endpointAddress);
+			String result = port2.ping("xeila");
+			System.out.println(result);
+		
 			// wait
 			System.out.println("Awaiting connections");
 			System.out.println("Press enter to shutdown");
