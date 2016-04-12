@@ -52,7 +52,7 @@ public class TransporterApplication {
 		UDDINaming uddiNaming = null;
 		
 		try {
-			TransporterPort port = new TransporterPort();
+			TransporterPort port = new TransporterPort(args[1]);
 			endpoint = Endpoint.create(port);
 	
 			// publish endpoint

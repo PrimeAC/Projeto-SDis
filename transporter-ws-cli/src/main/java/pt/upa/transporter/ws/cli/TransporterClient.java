@@ -4,6 +4,9 @@ import static javax.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
 import java.util.Map;
 import javax.xml.ws.BindingProvider;
 
+import pt.upa.transporter.ws.BadLocationFault_Exception;
+import pt.upa.transporter.ws.BadPriceFault_Exception;
+import pt.upa.transporter.ws.JobView;
 import pt.upa.transporter.ws.TransporterPortType;
 import pt.upa.transporter.ws.TransporterService;
 
@@ -31,6 +34,11 @@ public class TransporterClient {
 	
 	public String ping(String message){
 		return port.ping(message);	
+	}
+	
+	public JobView requestJob(String origin, String destination, int price)
+		throws BadLocationFault_Exception, BadPriceFault_Exception {
+		return port.requestJob(origin, destination, price);
 	}
 	
 	public static void main(String[] args) throws Exception {

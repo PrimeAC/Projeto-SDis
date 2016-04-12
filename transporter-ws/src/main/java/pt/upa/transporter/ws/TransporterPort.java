@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.jws.WebService;
@@ -22,24 +21,17 @@ import javax.jws.WebService;
 
 public class TransporterPort implements TransporterPortType{
 	
-	public int Id;
+	public String Id;
 	
 	static public Map<String, String> Locais = new HashMap<>(); 
 	
 	private List<JobView> Trabalhos = new ArrayList<>();
-	/*
-	private ArrayList<String> Norte = new ArrayList<>(Arrays.asList("Porto","Braga","Viana do Castelo","Vila Real","Bragança"));
-	private ArrayList<String> Centro = new ArrayList<>(Arrays.asList("Lisboa", "Leiria","Santarem","Castelo Branco","Coimbra","Aveiro","Viseu","Guarda"));
-	private ArrayList<String> Sul = new ArrayList<>(Arrays.asList("Setubal","Evora","Portalegre","Beja","Faro"));
-	*/
-	private Random random =new Random();
 	
-	
-	public void setId(int identifier) {
+	public TransporterPort(String identifier) {
 		Id=identifier;
 	}
 	
-	public int getId() {
+	public String getId() {
 		return Id;
 	}
 	
@@ -53,27 +45,36 @@ public class TransporterPort implements TransporterPortType{
 			throws BadLocationFault_Exception, BadPriceFault_Exception {
 		/*COMO OBTER AS TRANSPORTADORAS???????????????*/	
 		int offer=0;
-		if((Locais.get(origin).equals("Norte") || Locais.get(origin).equals("Centro") || Locais.get(origin).equals("Sul"))){
+		if((Locais.get(origin).equals("Norte") || Locais.get(origin).equals("Centro") 
+				|| Locais.get(origin).equals("Sul"))){
+			
 			if((Locais.get(destination).equals("Norte") || Locais.get(destination).equals("Centro") 
 					|| Locais.get(destination).equals("Sul"))){
+				
 				/*Origem e destino válidos*/
 				if(price<=0){
 					BadPriceFault faultInfo = new BadPriceFault();
 					faultInfo.setPrice(price);
 					throw new BadPriceFault_Exception("Preço inválido",faultInfo);
 				}
-				else if (((Locais.get(origin).equals("Norte") || Locais.get(origin).equals("Norte")) && getId()%2!=0) 
-						|| ((Locais.get(origin).equals("Sul") || Locais.get(origin).equals("Sul")) && getId()%2==0)){
+				
+				else if (((Locais.get(origin).equals("Norte") || Locais.get(destination).equals("Norte")) 
+								&& Integer.parseInt(getId())%2!=0) 
+						|| ((Locais.get(origin).equals("Sul") || Locais.get(destination).equals("Sul")) 
+								&& Integer.parseInt(getId())%2==0)){
 					return null;
 				}
+				
 				else if (price>100){
 					return null;
 				}
+				
 				else if (price <=10){
 					offer=ThreadLocalRandom.current().nextInt(1,10);
 				}
+				
 				else{
-					if ((price %2!=0 && getId()%2!=0) || (price%2==0 && getId()==0)) {
+					if ((price%2!=0 && Integer.parseInt(getId())%2!=0) || (price%2==0 && Integer.parseInt(getId())%2==0)) {
 						/*nome impar preço impar ou nome par preço par*/
 						offer=ThreadLocalRandom.current().nextInt(1,price);
 					}

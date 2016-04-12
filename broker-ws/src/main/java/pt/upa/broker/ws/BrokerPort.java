@@ -2,10 +2,15 @@ package pt.upa.broker.ws;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import javax.jws.WebService;
 import pt.upa.transporter.ws.BadPriceFault_Exception;
+import pt.upa.transporter.ws.JobView;
+import pt.upa.transporter.ws.cli.TransporterClient;
+import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
+import pt.upa.broker.BrokerApplication;
 import pt.upa.transporter.ws.BadLocationFault_Exception;
 
 @WebService(
@@ -20,9 +25,23 @@ import pt.upa.transporter.ws.BadLocationFault_Exception;
 public class BrokerPort implements BrokerPortType {
 	
 	private List<TransportView> Transportes = new ArrayList<>();
-	private ArrayList<String> Norte = new ArrayList<>(Arrays.asList("Porto","Braga","Viana do Castelo","Vila Real","Bragança"));
-	private ArrayList<String> Centro = new ArrayList<>(Arrays.asList("Lisboa", "Leiria","Santarem","Castelo Branco","Coimbra","Aveiro","Viseu","Guarda"));
-	private ArrayList<String> Sul = new ArrayList<>(Arrays.asList("Setubal","Evora","Portalegre","Beja","Faro"));
+	/*
+	static private List<TransporterClient> transporters = new ArrayList<>();
+	
+	public BrokerPort(String uddi){
+		
+		UDDINaming uddiNaming = new UDDINaming(uddi);
+		
+		// connecting with transporter
+		System.out.printf("Looking for '%s'%n", "UpaTransporters");
+		Collection<String> endpoints = uddiNaming.list("UpaTransporter%");
+		
+		System.out.println("Creating stub(s) ...");
+		for(String i : endpoints) {
+			TransporterClient tc = new TransporterClient(i);
+			transporters.add(tc);
+		}
+	}*/
 	
 	@Override
 	public String ping(String name) {
@@ -33,42 +52,32 @@ public class BrokerPort implements BrokerPortType {
 	public String requestTransport(String origin, String destination, int price)
 			throws InvalidPriceFault_Exception, UnavailableTransportFault_Exception,
 			UnavailableTransportPriceFault_Exception, UnknownLocationFault_Exception{
-			
-		if(Norte.contains(origin)){
-			if(Norte.contains(destination) || Centro.contains(destination)){
-				
-			}
-			else if(Sul.contains(destination)){
-				UnavailableTransportFault faultInfo = new UnavailableTransportFault();
-				faultInfo.setOrigin(origin);
-				faultInfo.setDestination(destination);
-				throw new UnavailableTransportFault_Exception("Destino inalcançável", faultInfo);
-			}
-		}
 		
-		else if(Centro.contains(origin)){
-			if(Norte.contains(destination) || Centro.contains(destination) || Sul.contains(destination)){
+			try{
+				for(TransporterClient i : BrokerApplication.getTransportersList()){
+					TransportView trans = new TransportView();
+					trans.setOrigin(origin);
+					trans.setDestination(destination);
+					trans.setPrice(price);
+					trans.setState(TransportStateView.REQUESTED);
+					
+					Transportes.add(trans);
+					
+					JobView job = i.requestJob(origin, destination, price);
+					
+					if( job == null) {
+						UnavailableTransportFault faultInfo = new UnavailableTransportFault();
+						faultInfo.setOrigin(origin);
+						faultInfo.setDestination(destination);
+						throw new UnavailableTransportFault_Exception("Transportes fora de serviço",faultInfo);
+					}
+					trans.setTransporterCompany(job.getCompanyName());
+					trans.setPrice(job.getJobPrice());
+					trans.setState(TransportStateView.BUDGETED);
+					/*atualizar na lista*/
+				}
+			}
 				
-			}
-		}
-		
-		else if(Sul.contains(origin)){
-			if(Sul.contains(destination) || Centro.contains(destination)){
-				/*SC SS*/
-			}
-			else if(Norte.contains(destination)){
-				UnavailableTransportFault faultInfo = new UnavailableTransportFault();
-				faultInfo.setOrigin(origin);
-				faultInfo.setDestination(destination);
-				throw new UnavailableTransportFault_Exception("Destino inalcançável", faultInfo);
-			}
-			
-		}
-		/*
-		try{
-			
-			
-			
 		}catch (BadPriceFault_Exception e) {
 			InvalidPriceFault faultInfo = new InvalidPriceFault();
 			faultInfo.setPrice(price);
@@ -79,7 +88,7 @@ public class BrokerPort implements BrokerPortType {
 			faultInfo.setLocation(origin);
 			throw new UnknownLocationFault_Exception("Origem/Destino inexistente", faultInfo);
 		}
-		*/
+
 		return "ola";
 	}
 		

@@ -15,6 +15,10 @@ public class BrokerApplication {
 	
 	static private List<TransporterClient> transporters = new ArrayList<>();	
 	
+	static public List<TransporterClient> getTransportersList(){
+		return transporters;
+	}
+	
 	public static void main(String[] args) throws Exception {
 		System.out.println(BrokerApplication.class.getSimpleName() + " starting...");
 		
@@ -51,12 +55,12 @@ public class BrokerApplication {
 			for(String i : endpoints) {
 				TransporterClient tc = new TransporterClient(i);
 				transporters.add(tc);
-			}
+			}/*
 			for(TransporterClient i : transporters) {
-				String result = i.ping("friend2");
+				String result = i.ping("sheila");
 				System.out.println(result);
-			}
-			
+			}*/
+			port.requestTransport("Lisboa", "Porto", 2);
 			// wait
 			System.out.println("Awaiting connections");
 			System.out.println("Press enter to shutdown");
