@@ -1,20 +1,20 @@
 package pt.upa.broker;
 
-import static javax.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-import java.util.Map;
-
-import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Endpoint;
 
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
-import pt.upa.broker.BrokerApplication;
 import pt.upa.broker.ws.BrokerPort;
-import pt.upa.transporter.ws.TransporterPortType;
-import pt.upa.transporter.ws.TransporterService;
+
+import pt.upa.transporter.ws.cli.TransporterClient;
 
 public class BrokerApplication {
-
+	
+	static private List<TransporterClient> transporters = new ArrayList<>();	
+	
 	public static void main(String[] args) throws Exception {
 		System.out.println(BrokerApplication.class.getSimpleName() + " starting...");
 		
@@ -44,20 +44,19 @@ public class BrokerApplication {
 			uddiNaming.rebind(name, url);
 			
 			// connecting with transporter
-			System.out.printf("Looking for '%s'%n", name);
-			String endpointAddress = uddiNaming.lookup(name);
+			System.out.printf("Looking for '%s'%n", "UpaTransporters");
+			Collection<String> endpoints = uddiNaming.list("UpaTransporter%");
 			
-			System.out.println("Creating stub ...");
-			TransporterService service = new TransporterService();
-			TransporterPortType port2 = service.getTransporterPort();
-		
-			System.out.println("Setting endpoint address ...");
-			BindingProvider bindingProvider = (BindingProvider) port2;
-			Map<String, Object> requestContext = bindingProvider.getRequestContext();
-			requestContext.put(ENDPOINT_ADDRESS_PROPERTY, endpointAddress);
-			String result = port2.ping("xeila");
-			System.out.println(result);
-		
+			System.out.println("Creating stub(s) ...");
+			for(String i : endpoints) {
+				TransporterClient tc = new TransporterClient(i);
+				transporters.add(tc);
+			}
+			for(TransporterClient i : transporters) {
+				String result = i.ping("friend2");
+				System.out.println(result);
+			}
+			
 			// wait
 			System.out.println("Awaiting connections");
 			System.out.println("Press enter to shutdown");
@@ -73,6 +72,7 @@ public class BrokerApplication {
 					// stop endpoint
 					endpoint.stop();
 					System.out.printf("Stopped %s%n", url);
+					
 				}
 			} catch (Exception e) {
 				System.out.printf("Caught exception when stopping: %s%n", e);
