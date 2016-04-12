@@ -97,10 +97,10 @@ public class TransporterPort implements TransporterPortType{
 		}
 		
 		JobView job = new JobView();
-		job.setCompanyName("UpaTransporter"+getId());
+		job.setCompanyName("UpaTransporter"+getId()); //talvez mal
 		job.setJobOrigin(origin);
 		job.setJobDestination(destination);
-		job.setJobIdentifier("" +getId());
+		job.setJobIdentifier("" +getId());  //talvez mal
 		job.setJobState(JobStateView.PROPOSED);
 		job.setJobPrice(offer);
 		Trabalhos.add(job);

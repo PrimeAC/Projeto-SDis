@@ -1,15 +1,12 @@
 package pt.upa.broker.ws;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import javax.jws.WebService;
 import pt.upa.transporter.ws.BadPriceFault_Exception;
 import pt.upa.transporter.ws.JobView;
 import pt.upa.transporter.ws.cli.TransporterClient;
-import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
 import pt.upa.broker.BrokerApplication;
 import pt.upa.transporter.ws.BadLocationFault_Exception;
 
@@ -52,7 +49,10 @@ public class BrokerPort implements BrokerPortType {
 	public String requestTransport(String origin, String destination, int price)
 			throws InvalidPriceFault_Exception, UnavailableTransportFault_Exception,
 			UnavailableTransportPriceFault_Exception, UnknownLocationFault_Exception{
-		
+			
+		int update=price; //meu inicialização do preço máximo definido pelo cliente
+		int aux=100;	//meu inicialização do preço máximo possivel
+		String id="";		//meu inicialização do id inexistente
 			try{
 				for(TransporterClient i : BrokerApplication.getTransportersList()){
 					TransportView trans = new TransportView();
@@ -73,10 +73,26 @@ public class BrokerPort implements BrokerPortType {
 					}
 					trans.setTransporterCompany(job.getCompanyName());
 					trans.setPrice(job.getJobPrice());
-					trans.setState(TransportStateView.BUDGETED);
+					if ((job.getJobPrice()) < update){ //meu vê se o preço é menor que o atual
+						update= job.getJobPrice(); //meu atualizar o valor minimo encontrado
+						id=job.getJobIdentifier(); //meu conseguir o id da transportadora menor , n sei se está certo
+					}
+					else {  //serve para ver o BestPriceFound para a excepção
+						if((job.getJobPrice()) < aux){ //vê se o preço é menor que o atual
+							aux=job.getJobPrice();    //atualiza o melhor preço que se arranjou (excepção)
+						}
+					}
+					trans.setState(TransportStateView.BUDGETED); //n sei se é o posicionamento correto
 					/*atualizar na lista*/
 				}
-			}
+				if (update==price){
+					trans.setState(TransportStateView.FAILED); //mal posicionado
+					UnavailableTransportPriceFault faultInfo = new UnavailableTransportPriceFault();
+					faultInfo.setBestPriceFound(aux);
+					throw new UnavailableTransportPriceFault_Exception("Orçamento demasiado baixo",faultInfo);
+				}
+				trans.setState(TransportStateView.BOOKED); //mal posicionado
+				return id;  //retorna o id da transportadora melhor , talvez esteja errado
 				
 		}catch (BadPriceFault_Exception e) {
 			InvalidPriceFault faultInfo = new InvalidPriceFault();
@@ -89,7 +105,6 @@ public class BrokerPort implements BrokerPortType {
 			throw new UnknownLocationFault_Exception("Origem/Destino inexistente", faultInfo);
 		}
 
-		return "ola";
 	}
 		
 		
