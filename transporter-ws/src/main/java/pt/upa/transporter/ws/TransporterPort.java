@@ -24,7 +24,7 @@ public class TransporterPort implements TransporterPortType{
 	public String Id;
 	
 	static public Map<String, String> Locais = new HashMap<>(); 
-	
+	static public int cnt=0;
 	private List<JobView> Trabalhos = new ArrayList<>();
 	
 	public TransporterPort(String identifier) {
@@ -100,7 +100,7 @@ public class TransporterPort implements TransporterPortType{
 		job.setCompanyName("UpaTransporter"+getId()); //talvez mal
 		job.setJobOrigin(origin);
 		job.setJobDestination(destination);
-		job.setJobIdentifier("" +getId());  //talvez mal
+		job.setJobIdentifier(getId()+Integer.toString(cnt++));  //talvez mal
 		job.setJobState(JobStateView.PROPOSED);
 		job.setJobPrice(offer);
 		Trabalhos.add(job);

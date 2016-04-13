@@ -57,10 +57,10 @@ public class BrokerApplication {
 				transporters.add(tc);
 			}/*
 			for(TransporterClient i : transporters) {
-				String result = i.ping("sheila");
+				JobView result = i.requestJob("Lisboa", "Porto", 30);
 				System.out.println(result);
-			}*/
-			port.requestTransport("Lisboa", "Porto", 2);
+			}
+			*/
 			// wait
 			System.out.println("Awaiting connections");
 			System.out.println("Press enter to shutdown");

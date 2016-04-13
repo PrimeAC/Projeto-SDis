@@ -45,14 +45,14 @@ public class TransporterApplication {
 		TransporterPort.Locais = Locais;
 		
 		String uddiURL = args[0];
-		String Id = args[1];
+		String[] Id = args[1].split(" ");
 		String url = args[2];
 	
 		Endpoint endpoint = null;
 		UDDINaming uddiNaming = null;
 		
 		try {
-			TransporterPort port = new TransporterPort(args[1]);
+			TransporterPort port = new TransporterPort(Id[0]);
 			endpoint = Endpoint.create(port);
 	
 			// publish endpoint
@@ -60,9 +60,9 @@ public class TransporterApplication {
 			endpoint.publish(url);
 	
 			// publish to UDDI
-			System.out.printf("Publishing '%s' to UDDI at %s%n", Id, uddiURL);
+			System.out.printf("Publishing '%s' to UDDI at %s%n", args[1], uddiURL);
 			uddiNaming = new UDDINaming(uddiURL);
-			uddiNaming.rebind(Id, url);
+			uddiNaming.rebind(args[1], url);
 	
 			// wait
 			System.out.println("Awaiting connections");
@@ -86,8 +86,8 @@ public class TransporterApplication {
 			try {
 				if (uddiNaming != null) {
 					// delete from UDDI
-					uddiNaming.unbind(Id);
-					System.out.printf("Deleted '%s' from UDDI%n", Id);
+					uddiNaming.unbind(args[1]);
+					System.out.printf("Deleted '%s' from UDDI%n", args[1]);
 				}
 			} catch (Exception e) {
 				System.out.printf("Caught exception when deleting: %s%n", e);
