@@ -45,14 +45,14 @@ public class TransporterApplication {
 		TransporterPort.Locais = Locais;
 		
 		String uddiURL = args[0];
-		String[] Id = args[1].split(" ");
+		String Id = args[1];
 		String url = args[2];
 	
 		Endpoint endpoint = null;
 		UDDINaming uddiNaming = null;
 		
 		try {
-			TransporterPort port = new TransporterPort(Id[0]);
+			TransporterPort port = new TransporterPort(Id);
 			endpoint = Endpoint.create(port);
 	
 			// publish endpoint

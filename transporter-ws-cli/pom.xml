@@ -22,7 +22,7 @@
         <wsdl.directory>${basedir}/../transporter-ws/src/main/resources</wsdl.directory>
         <wsdl.filename>transporter.1_0.wsdl</wsdl.filename>
 
-        <mainclass>pt.upa.transporter.ws.cli.TransporterClient</mainclass>
+        <mainclass>pt.upa.transporter.TransporterClientApplication</mainclass>
 
         <ws.name>UpaTransporter</ws.name>
         <uddi.url>http://localhost:9090</uddi.url>

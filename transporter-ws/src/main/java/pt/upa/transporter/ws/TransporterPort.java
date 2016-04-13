@@ -28,6 +28,8 @@ public class TransporterPort implements TransporterPortType{
 	private List<JobView> Trabalhos = new ArrayList<>();
 	
 	public TransporterPort(String identifier) {
+		identifier.replaceAll("UpaTrasporter","");
+		System.out.println(identifier);
 		Id=identifier;
 	}
 	
@@ -43,7 +45,8 @@ public class TransporterPort implements TransporterPortType{
 	@Override
 	public JobView requestJob(String origin, String destination, int price)
 			throws BadLocationFault_Exception, BadPriceFault_Exception {
-		/*COMO OBTER AS TRANSPORTADORAS???????????????*/	
+		System.out.println("cheguei aqui");
+		/*
 		int offer=0;
 		if((Locais.get(origin).equals("Norte") || Locais.get(origin).equals("Centro") 
 				|| Locais.get(origin).equals("Sul"))){
@@ -52,6 +55,8 @@ public class TransporterPort implements TransporterPortType{
 					|| Locais.get(destination).equals("Sul"))){
 				
 				/*Origem e destino válidos*/
+		
+		/*
 				if(price<=0){
 					BadPriceFault faultInfo = new BadPriceFault();
 					faultInfo.setPrice(price);
@@ -76,10 +81,12 @@ public class TransporterPort implements TransporterPortType{
 				else{
 					if ((price%2!=0 && Integer.parseInt(getId())%2!=0) || (price%2==0 && Integer.parseInt(getId())%2==0)) {
 						/*nome impar preço impar ou nome par preço par*/
+		/*
 						offer=ThreadLocalRandom.current().nextInt(1,price);
 					}
 					else {
 						/*nome par preço impar ou nome impar preço par*/
+		/*
 						offer = ThreadLocalRandom.current().nextInt(price+1,101);
 					}
 				}
@@ -104,6 +111,8 @@ public class TransporterPort implements TransporterPortType{
 		job.setJobState(JobStateView.PROPOSED);
 		job.setJobPrice(offer);
 		Trabalhos.add(job);
+		*/
+		JobView job = new JobView();
 		return job;
 	}
 
