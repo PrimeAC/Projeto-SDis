@@ -52,18 +52,18 @@ public class BrokerPort implements BrokerPortType {
 			
 		int update=price; //meu inicialização do preço máximo definido pelo cliente
 		int aux=100;	//meu inicialização do preço máximo possivel
+		int flag=0;
 		String id="";		//meu inicialização do id inexistente
 			try{
-				for(TransporterClient i : BrokerApplication.getTransportersList()){
-					TransportView trans = new TransportView();
-					trans.setOrigin(origin);
-					trans.setDestination(destination);
-					trans.setPrice(price);
-					trans.setState(TransportStateView.REQUESTED);
-					
-					Transportes.add(trans);
-					
-					JobView job = i.requestJob(origin, destination, price);
+				TransportView trans = new TransportView();	//cria-se um transporte, acho que se devia criar lá fora
+				trans.setOrigin(origin); //acho que é fora do try
+				trans.setDestination(destination); //acho que é fora do try
+				trans.setPrice(price); //acho que é fora do try
+				trans.setState(TransportStateView.REQUESTED); //acho que é fora do try
+				
+				for(TransporterClient i : BrokerApplication.getTransportersList()){ //percorro as transportadoras
+						
+					JobView job = i.requestJob(origin, destination, price); //cada transportadora oferece um preço/trabalho
 					
 					if( job == null) {
 						UnavailableTransportFault faultInfo = new UnavailableTransportFault();
@@ -71,27 +71,33 @@ public class BrokerPort implements BrokerPortType {
 						faultInfo.setDestination(destination);
 						throw new UnavailableTransportFault_Exception("Transportes fora de serviço",faultInfo);
 					}
-					trans.setTransporterCompany(job.getCompanyName());
-					trans.setPrice(job.getJobPrice());
+						trans.setState(TransportStateView.BUDGETED);
+					
 					if ((job.getJobPrice()) < update){ //meu vê se o preço é menor que o atual
 						update= job.getJobPrice(); //meu atualizar o valor minimo encontrado
 						id=job.getJobIdentifier(); //meu conseguir o id da transportadora menor , n sei se está certo
+						flag=1;
+						trans.setTransporterCompany(job.getCompanyName()); //talvez mal posicionado
+						trans.setPrice(job.getJobPrice()); //talvez mal posicionado
 					}
 					else {  //serve para ver o BestPriceFound para a excepção
-						if((job.getJobPrice()) < aux){ //vê se o preço é menor que o atual
+						if(((job.getJobPrice()) < aux) && flag==0){ //vê se o preço é menor que o atual, desde que nunca tenha havido uma oferta abaixo do preço
 							aux=job.getJobPrice();    //atualiza o melhor preço que se arranjou (excepção)
 						}
 					}
-					trans.setState(TransportStateView.BUDGETED); //n sei se é o posicionamento correto
 					/*atualizar na lista*/
 				}
 				if (update==price){
-					trans.setState(TransportStateView.FAILED); //mal posicionado
+					trans.setState(TransportStateView.FAILED); //talvez mal posicionado
 					UnavailableTransportPriceFault faultInfo = new UnavailableTransportPriceFault();
 					faultInfo.setBestPriceFound(aux);
 					throw new UnavailableTransportPriceFault_Exception("Orçamento demasiado baixo",faultInfo);
 				}
-				trans.setState(TransportStateView.BOOKED); //mal posicionado
+				else{
+					trans.setState(TransportStateView.BOOKED);
+					Transportes.add(trans); //talvez mal posicionado
+				}
+				
 				return id;  //retorna o id da transportadora melhor , talvez esteja errado
 				
 		}catch (BadPriceFault_Exception e) {
