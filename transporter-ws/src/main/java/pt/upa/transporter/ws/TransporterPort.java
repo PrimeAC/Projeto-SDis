@@ -23,14 +23,14 @@ public class TransporterPort implements TransporterPortType{
 	
 	public String Id;
 	
-	static public Map<String, String> Locais = new HashMap<>(); 
+	static public Map<String, String> Locais = new HashMap<>();
+	
 	static public int cnt=0;
+	
 	private List<JobView> Trabalhos = new ArrayList<>();
 	
 	public TransporterPort(String identifier) {
-		identifier.replaceAll("UpaTrasporter","");
-		System.out.println(identifier);
-		Id=identifier;
+		Id=String.valueOf(identifier.charAt(14));
 	}
 	
 	public String getId() {
@@ -46,7 +46,8 @@ public class TransporterPort implements TransporterPortType{
 	public JobView requestJob(String origin, String destination, int price)
 			throws BadLocationFault_Exception, BadPriceFault_Exception {
 		System.out.println("cheguei aqui");
-		/*
+		System.out.println(getId());
+		
 		int offer=0;
 		if((Locais.get(origin).equals("Norte") || Locais.get(origin).equals("Centro") 
 				|| Locais.get(origin).equals("Sul"))){
@@ -56,7 +57,7 @@ public class TransporterPort implements TransporterPortType{
 				
 				/*Origem e destino válidos*/
 		
-		/*
+		
 				if(price<=0){
 					BadPriceFault faultInfo = new BadPriceFault();
 					faultInfo.setPrice(price);
@@ -81,12 +82,12 @@ public class TransporterPort implements TransporterPortType{
 				else{
 					if ((price%2!=0 && Integer.parseInt(getId())%2!=0) || (price%2==0 && Integer.parseInt(getId())%2==0)) {
 						/*nome impar preço impar ou nome par preço par*/
-		/*
+		
 						offer=ThreadLocalRandom.current().nextInt(1,price);
 					}
 					else {
 						/*nome par preço impar ou nome impar preço par*/
-		/*
+		
 						offer = ThreadLocalRandom.current().nextInt(price+1,101);
 					}
 				}
@@ -111,8 +112,8 @@ public class TransporterPort implements TransporterPortType{
 		job.setJobState(JobStateView.PROPOSED);
 		job.setJobPrice(offer);
 		Trabalhos.add(job);
-		*/
-		JobView job = new JobView();
+		System.out.println(job.getJobPrice());
+
 		return job;
 	}
 

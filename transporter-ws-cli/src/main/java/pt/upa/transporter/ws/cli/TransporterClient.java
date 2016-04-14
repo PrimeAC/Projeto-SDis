@@ -14,6 +14,7 @@ import pt.upa.transporter.ws.TransporterPortType;
 import pt.upa.transporter.ws.TransporterService;
 
 public class TransporterClient {
+	
 	private TransporterPortType port;
 	
 	public TransporterClient(String endpointAddress) {
@@ -34,6 +35,9 @@ public class TransporterClient {
 		Map<String, Object> requestContext = bindingProvider.getRequestContext();
 		requestContext.put(ENDPOINT_ADDRESS_PROPERTY, endpointAddress);
 	}
+	public TransporterPortType getPort() {
+		return port;
+	}
 	
 	public String ping(String message){
 		return port.ping(message);	
@@ -50,6 +54,10 @@ public class TransporterClient {
 	
 	public List<JobView> listJobs() {
 		return port.listJobs();
+	}
+	
+	public JobView jobStatus(String id) {
+		return port.jobStatus(id);
 	}
 	
 	public static void main(String[] args) throws Exception {

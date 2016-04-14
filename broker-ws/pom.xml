@@ -43,9 +43,6 @@
         	<artifactId>transporter-ws</artifactId>
         	<version>1.0-SNAPSHOT</version>
         </dependency>
-        
-        <!-- TransporterClient -->
-   
         <!-- UDDI Naming -->
         <dependency>
             <groupId>pt.ulisboa.tecnico.sdis</groupId>

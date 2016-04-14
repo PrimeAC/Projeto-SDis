@@ -1,10 +1,13 @@
 package pt.upa.broker.ws;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.jws.WebService;
 import pt.upa.transporter.ws.BadPriceFault_Exception;
+import pt.upa.transporter.ws.JobStateView;
 import pt.upa.transporter.ws.JobView;
 import pt.upa.transporter.ws.cli.TransporterClient;
 import pt.upa.broker.BrokerApplication;
@@ -23,6 +26,10 @@ import pt.upa.transporter.ws.BadLocationFault_Exception;
 public class BrokerPort implements BrokerPortType {
 	
 	private List<TransportView> Transportes = new ArrayList<>();
+	
+	private Map<String, String> Identificadores = new HashMap<>();
+	
+	static private int generator = 0;
 	/*
 	static private List<TransporterClient> transporters = new ArrayList<>();
 	
@@ -57,87 +64,67 @@ public class BrokerPort implements BrokerPortType {
 				trans.setDestination(destination); //acho que é fora do try
 				trans.setPrice(price); //acho que é fora do try
 				trans.setState(TransportStateView.REQUESTED); //acho que é fora do try
+				trans.setId(String.valueOf(generator++));
+				
+				JobView finalJob = null;
+				TransporterClient finalCompany = null;
 				
 				for(TransporterClient i : BrokerApplication.getTransportersList()){ //percorro as transportadoras
 					
 					JobView job = i.requestJob(origin, destination, price); //cada transportadora oferece um preço/trabalho
-					
-				
+
 					if( job == null) {
-						UnavailableTransportFault faultInfo = new UnavailableTransportFault();
-						faultInfo.setOrigin(origin);
-						faultInfo.setDestination(destination);
-						throw new UnavailableTransportFault_Exception("Transportes fora de serviço",faultInfo);
+						continue;
 					}
 					else {
-						trans.setPrice(job.getJobPrice());
-						trans.setTransporterCompany(job.getCompanyName());
-						trans.setId(job.getJobIdentifier());
-						trans.setState(TransportStateView.BUDGETED);
-						Transportes.add(trans);
-					}
-				}
-				
-				int update=price, aux=0, flag=0;
-				String result="";
-				
-				for(TransportView i : Transportes) {
-					
-					if ((i.getPrice()) < update){ //meu vê se o preço é menor que o atual
-						update= i.getPrice(); //meu atualizar o valor minimo encontrado
-						result=i.getId(); //meu conseguir o id da transportadora menor , n sei se está certo
-						flag=1;
-					}
-					else {  //serve para ver o BestPriceFound para a excepção
-						if(flag==0){
-							if(aux==0) {
-								aux=i.getPrice();
-							}
-							else{
-								if(((i.getPrice())<aux)){ //vê se o preço é menor que o atual, desde que nunca tenha havido uma oferta abaixo do preço
-									aux=i.getPrice();    //atualiza o melhor preço que se arranjou (excepção)
-								}
+						if(finalJob == null) {
+							trans.setState(TransportStateView.BUDGETED);
+							finalJob=job;
+							finalCompany=i;
+						}
+						else {
+							if(job.getJobPrice()<finalJob.getJobPrice()) {
+								finalCompany.decideJob(finalJob.getJobIdentifier(), false);
+								finalJob=job;
+								finalCompany=i;
 							}
 						}
 					}
-		
 				}
-				if (result.equals("")){
+				
+				if(finalJob == null){
+					UnavailableTransportFault faultInfo = new UnavailableTransportFault();
+					faultInfo.setOrigin(origin);
+					faultInfo.setDestination(destination);
+					throw new UnavailableTransportFault_Exception("Transportes fora de serviço",faultInfo);
+				}
+				
+				trans.setPrice(finalJob.getJobPrice());
+				trans.setTransporterCompany(finalJob.getCompanyName());
+				Identificadores.put(trans.getId(), finalJob.getJobIdentifier());
+				Transportes.add(trans);
+				
+				if(trans.getPrice()>price){//verifica se a melhor oferta foi ACIMA do preço pedido
+					finalCompany.decideJob(finalJob.getJobIdentifier(), false);
+					trans.setState(TransportStateView.FAILED);
+					
 					UnavailableTransportPriceFault faultInfo = new UnavailableTransportPriceFault();
-					faultInfo.setBestPriceFound(aux);
+					faultInfo.setBestPriceFound(finalJob.getJobPrice());
 					throw new UnavailableTransportPriceFault_Exception("Orçamento demasiado baixo",faultInfo);
 				}
 				
-				for(TransporterClient i : BrokerApplication.getTransportersList()) {
-					
-					for(JobView j : i.listJobs()){
-						try{
-					
-							if(j.getJobIdentifier().equals(result)){
-								i.decideJob(j.getJobIdentifier(), true);	
-							}
-		
-							else {
-								i.decideJob(j.getJobIdentifier(), false);
-							}
-						}catch(BadJobFault_Exception e){
-							UnavailableTransportFault faultInfo = new UnavailableTransportFault();
-							faultInfo.setOrigin(origin);
-							faultInfo.setDestination(destination);
-							throw new UnavailableTransportFault_Exception("Id de transporte inválido",faultInfo);
-						}
-					}
+				else {
+					finalCompany.decideJob(finalJob.getJobIdentifier(), true);
+					trans.setState(TransportStateView.BOOKED);
 				}
-			
-				for(TransportView k : Transportes) {
-					if(k.getId().equals(result)) {
-						k.setState(TransportStateView.BOOKED);
-					}
-					else {
-						k.setState(TransportStateView.FAILED);
-					}
-				}
-				return result;
+				
+				return trans.getId();
+				
+			}catch(BadJobFault_Exception e){
+				UnavailableTransportFault faultInfo = new UnavailableTransportFault();
+				faultInfo.setOrigin(origin);
+				faultInfo.setDestination(destination);
+				throw new UnavailableTransportFault_Exception("Id de transporte inválido",faultInfo);	
 				
 			}catch (BadPriceFault_Exception e) {
 				InvalidPriceFault faultInfo = new InvalidPriceFault();
@@ -154,20 +141,65 @@ public class BrokerPort implements BrokerPortType {
 		
 	@Override
 	public TransportView viewTransport(String id) throws UnknownTransportFault_Exception {
+		/*
+		TransportView transport = null;
+		TransporterClient transporter = null;
+		JobView result = null;
+		String jobId = null;
 		
 		for( TransportView i : Transportes) {
 			if(i.getId().equals(id)) {
-				return i;
+				transport=i;
+				jobId=i.getId();
 			}
 		}
-		UnknownTransportFault faultInfo = new UnknownTransportFault();
-		faultInfo.setId(id);
-		throw new UnknownTransportFault_Exception("Id não encontrado!", faultInfo);
+		
+		for(TransporterClient i : BrokerApplication.getTransportersList()){
+			
+			for(JobView j : i.listJobs()){
+				
+				if(j.getJobIdentifier().equals(Identificadores.get(id))){
+					
+					result = i.jobStatus(j.getJobIdentifier());
+					
+					if(result.getJobState().equals(JobStateView.PROPOSED)){
+						transport.setState(TransportStateView.BUDGETED);
+					}
+					else if(result.getJobState().equals(JobStateView.ACCEPTED)){
+						transport.setState(TransportStateView.BOOKED);
+					}
+					else if(result.getJobState().equals(JobStateView.REJECTED)){
+						transport.setState(TransportStateView.FAILED);
+					}
+					else if(result.getJobState().equals(JobStateView.HEADING)){
+						transport.setState(TransportStateView.HEADING);
+					}
+					else if(result.getJobState().equals(JobStateView.ONGOING)){
+						transport.setState(TransportStateView.ONGOING);
+					}
+					else{
+						transport.setState(TransportStateView.COMPLETED);
+					}
+				}
+			}
+		}
+		
+		if(transport == null) {
+			UnknownTransportFault faultInfo = new UnknownTransportFault();
+			faultInfo.setId(id);
+			throw new UnknownTransportFault_Exception("Id não encontrado!", faultInfo);
+		}*/
+		TransportView ola = new TransportView();
+		return ola;
 	}
 
 	@Override
 	public List<TransportView> listTransports() {
-	
+		/*
+		for( TransportView i : Transportes) {
+			viewTransport(i.getId());
+		}
+		*/
 		return Transportes;
 	}
 
