@@ -141,7 +141,7 @@ public class BrokerPort implements BrokerPortType {
 		
 	@Override
 	public TransportView viewTransport(String id) throws UnknownTransportFault_Exception {
-		/*
+		
 		TransportView transport = null;
 		TransporterClient transporter = null;
 		JobView result = null;
@@ -149,8 +149,14 @@ public class BrokerPort implements BrokerPortType {
 		
 		for( TransportView i : Transportes) {
 			if(i.getId().equals(id)) {
-				transport=i;
-				jobId=i.getId();
+				if(i.getState().equals(TransportStateView.REQUESTED) || i.getState().equals(TransportStateView.BUDGETED)
+					|| i.getState().equals(TransportStateView.FAILED) || i.getState().equals(TransportStateView.BOOKED)){
+					
+					continue;
+				}
+				else{
+					
+				}
 			}
 		}
 		
