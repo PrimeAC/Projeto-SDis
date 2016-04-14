@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.jws.WebService;
@@ -45,8 +47,6 @@ public class TransporterPort implements TransporterPortType{
 	@Override
 	public JobView requestJob(String origin, String destination, int price)
 			throws BadLocationFault_Exception, BadPriceFault_Exception {
-		System.out.println("cheguei aqui");
-		System.out.println(getId());
 		
 		int offer=0;
 		if((Locais.get(origin).equals("Norte") || Locais.get(origin).equals("Centro") 
@@ -123,6 +123,7 @@ public class TransporterPort implements TransporterPortType{
 			if(i.getJobIdentifier().equals(id)) {
 				if(accept){
 					i.setJobState(JobStateView.ACCEPTED);
+					new Repeater(i);
 				}
 				else {
 					i.setJobState(JobStateView.REJECTED);	
@@ -156,6 +157,58 @@ public class TransporterPort implements TransporterPortType{
 			Trabalhos.clear();
 	}
 
+	public class Repeater {
+		
+		Timer timer;
+		Timer timer2;
+		Timer timer3;
+		
+		public Repeater(JobView job) {
+			
+			timer = new Timer();
+			timer2 = new Timer();
+			timer3 = new Timer();
 	
+			int temp = (ThreadLocalRandom.current().nextInt(1000,5001));
+			int temp2 = temp + ThreadLocalRandom.current().nextInt(1000,5001);
+			int temp3 = temp2 + ThreadLocalRandom.current().nextInt(1000,5001);
+			
+			timer.schedule(new StatusChanger(job),temp);
+			timer2.schedule(new StatusChanger(job), temp2);
+			timer3.schedule(new StatusChanger(job), temp3);
+		}
+		class StatusChanger extends TimerTask {
+			
+			private JobView job;
+			
+			StatusChanger(JobView arg) {
+				job=arg;
+			}
+			
+			public void run() {
+				switch(job.getJobState()) {
+				
+					case ONGOING: 
+						job.setJobState(JobStateView.COMPLETED);
+						timer3.cancel();
+						break;
+					
+					case HEADING: 
+						job.setJobState(JobStateView.ONGOING);
+						timer2.cancel();
+						break;
+					
+					case ACCEPTED: 
+						job.setJobState(JobStateView.HEADING);
+						timer.cancel();
+						break;
+					
+					default: break;
+				}
+			}
+		}
+		
+			
+		}
 
 }

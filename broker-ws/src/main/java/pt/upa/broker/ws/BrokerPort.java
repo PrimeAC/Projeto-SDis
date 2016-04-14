@@ -30,23 +30,6 @@ public class BrokerPort implements BrokerPortType {
 	private Map<String, String> Identificadores = new HashMap<>();
 	
 	static private int generator = 0;
-	/*
-	static private List<TransporterClient> transporters = new ArrayList<>();
-	
-	public BrokerPort(String uddi){
-		
-		UDDINaming uddiNaming = new UDDINaming(uddi);
-		
-		// connecting with transporter
-		System.out.printf("Looking for '%s'%n", "UpaTransporters");
-		Collection<String> endpoints = uddiNaming.list("UpaTransporter%");
-		
-		System.out.println("Creating stub(s) ...");
-		for(String i : endpoints) {
-			TransporterClient tc = new TransporterClient(i);
-			transporters.add(tc);
-		}
-	}*/
 	
 	@Override
 	public String ping(String name) {
@@ -107,7 +90,7 @@ public class BrokerPort implements BrokerPortType {
 				if(trans.getPrice()>price){//verifica se a melhor oferta foi ACIMA do preço pedido
 					finalCompany.decideJob(finalJob.getJobIdentifier(), false);
 					trans.setState(TransportStateView.FAILED);
-					
+			
 					UnavailableTransportPriceFault faultInfo = new UnavailableTransportPriceFault();
 					faultInfo.setBestPriceFound(finalJob.getJobPrice());
 					throw new UnavailableTransportPriceFault_Exception("Orçamento demasiado baixo",faultInfo);
@@ -117,6 +100,8 @@ public class BrokerPort implements BrokerPortType {
 					finalCompany.decideJob(finalJob.getJobIdentifier(), true);
 					trans.setState(TransportStateView.BOOKED);
 				}
+				
+				
 				
 				return trans.getId();
 				
@@ -143,50 +128,14 @@ public class BrokerPort implements BrokerPortType {
 	public TransportView viewTransport(String id) throws UnknownTransportFault_Exception {
 		
 		TransportView transport = null;
-		TransporterClient transporter = null;
-		JobView result = null;
 		String jobId = null;
+		
+		jobId = Identificadores.get(id);
 		
 		for( TransportView i : Transportes) {
 			if(i.getId().equals(id)) {
-				if(i.getState().equals(TransportStateView.REQUESTED) || i.getState().equals(TransportStateView.BUDGETED)
-					|| i.getState().equals(TransportStateView.FAILED) || i.getState().equals(TransportStateView.BOOKED)){
-					
-					continue;
-				}
-				else{
-					
-				}
-			}
-		}
-		
-		for(TransporterClient i : BrokerApplication.getTransportersList()){
-			
-			for(JobView j : i.listJobs()){
-				
-				if(j.getJobIdentifier().equals(Identificadores.get(id))){
-					
-					result = i.jobStatus(j.getJobIdentifier());
-					
-					if(result.getJobState().equals(JobStateView.PROPOSED)){
-						transport.setState(TransportStateView.BUDGETED);
-					}
-					else if(result.getJobState().equals(JobStateView.ACCEPTED)){
-						transport.setState(TransportStateView.BOOKED);
-					}
-					else if(result.getJobState().equals(JobStateView.REJECTED)){
-						transport.setState(TransportStateView.FAILED);
-					}
-					else if(result.getJobState().equals(JobStateView.HEADING)){
-						transport.setState(TransportStateView.HEADING);
-					}
-					else if(result.getJobState().equals(JobStateView.ONGOING)){
-						transport.setState(TransportStateView.ONGOING);
-					}
-					else{
-						transport.setState(TransportStateView.COMPLETED);
-					}
-				}
+				transport=i;
+				break;
 			}
 		}
 		
@@ -194,18 +143,41 @@ public class BrokerPort implements BrokerPortType {
 			UnknownTransportFault faultInfo = new UnknownTransportFault();
 			faultInfo.setId(id);
 			throw new UnknownTransportFault_Exception("Id não encontrado!", faultInfo);
-		}*/
-		TransportView ola = new TransportView();
-		return ola;
+		}
+		for(TransporterClient i : BrokerApplication.getTransportersList()){
+			if(i.getCompanyName().equals(transport.getTransporterCompany())){
+
+				if(i.jobStatus(jobId).getJobState().equals(JobStateView.HEADING)){
+					transport.setState(TransportStateView.HEADING);
+				}
+				else if(i.jobStatus(jobId).getJobState().equals(JobStateView.ONGOING)){
+					transport.setState(TransportStateView.ONGOING);
+				}
+				else if(i.jobStatus(jobId).getJobState().equals(JobStateView.COMPLETED)){
+					transport.setState(TransportStateView.COMPLETED);
+				}
+			}
+		}
+	
+		return transport;
 	}
 
 	@Override
 	public List<TransportView> listTransports() {
-		/*
-		for( TransportView i : Transportes) {
-			viewTransport(i.getId());
+		
+		List<TransportView> result = new ArrayList<>();
+		
+		try{
+			for( TransportView i : Transportes) {
+				result.add(viewTransport(i.getId()));
+			}
+			
+		}catch(UnknownTransportFault_Exception e){
+			e.printStackTrace();
 		}
-		*/
+		
+		Transportes = result;
+		
 		return Transportes;
 	}
 

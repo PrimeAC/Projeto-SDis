@@ -52,6 +52,11 @@ public class BrokerClient {
 		System.out.println(result);
 		result = port.requestTransport("Lisboa", "Porto", 50);
 		
+		while(true){
+			System.out.println(port.viewTransport(result).getState());
+		}
+		
+		
 
 		
 	}
