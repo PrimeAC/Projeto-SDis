@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -12,6 +13,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import pt.upa.transporter.TransporterApplication;
+import pt.upa.transporter.ws.TransporterPort.Repeater.StatusChanger;
 
 /**
  *  Unit Test example
@@ -24,7 +26,6 @@ public class TransporterPortTest {
     // static members
 	private TransporterPort localPort;
 	private TransporterPort localPort1;
-	
 
     // one-time initialization and clean-up
 
@@ -62,25 +63,23 @@ public class TransporterPortTest {
     @Test
     public void testDefaultPing() {
     	assertEquals("Pong test!", localPort.ping("test"));
-        // assertEquals(expected, actual);
-        // if the assert fails, the test fails
+       
     }
     
     @Test
     public void testDefaultGetId() {
     	assertEquals("1", localPort.getId());
-        // assertEquals(expected, actual);
-        // if the assert fails, the test fails
+       
     }
     
     
     @Test
     public void testPriceBellow10() throws BadLocationFault_Exception, BadPriceFault_Exception {
+    	int price = localPort.requestJob("Lisboa", "Faro", 9).getJobPrice();
     	
-    	assertTrue((1 < (localPort.requestJob("Lisboa", "Faro", 9).getJobPrice())) && ((localPort.requestJob("Lisboa", "Faro", 9).getJobPrice())  <= 10));
+    	assertTrue(1<price);
+    	assertTrue(price<=10);
     	
-   		// assertEquals(expected, actual);
-        // if the assert fails, the test fails
     }
     
     @Test
@@ -88,8 +87,7 @@ public class TransporterPortTest {
     	
     	assertNull((localPort.requestJob("Lisboa", "Faro", 101)));
     	
-   		// assertEquals(expected, actual);
-        // if the assert fails, the test fails
+   		
     }
     
     @Test
@@ -97,42 +95,57 @@ public class TransporterPortTest {
     	
     	assertTrue((0 == (localPort.requestJob("Lisboa", "Faro", 1).getJobPrice())) && ((localPort.requestJob("Lisboa", "Faro", 0).getJobPrice())  == 0));
     	
-   		// assertEquals(expected, actual);
-        // if the assert fails, the test fails
     }
     @Test(expected = BadPriceFault_Exception.class)
     public void testBadPriceFault() throws BadLocationFault_Exception, BadPriceFault_Exception {
     	
     	localPort.requestJob("Lisboa", "Faro", -1);
     	
-   		// assertEquals(expected, actual);
-        // if the assert fails, the test fails
+   	
+    }
+    @Test(expected = BadLocationFault_Exception.class)
+    public void testEmptyOrigin() throws BadLocationFault_Exception, BadPriceFault_Exception {
+    	
+    	localPort.requestJob("", "Faro", 4);
+    	  		
+    }
+    @Test(expected = BadLocationFault_Exception.class)
+    public void testEmptyDestination() throws BadLocationFault_Exception, BadPriceFault_Exception {
+    	
+    	localPort.requestJob("Faro", "", 4);
+    	  		
+    }
+    @Test(expected = BadLocationFault_Exception.class)
+    public void testNullOrigin() throws BadLocationFault_Exception, BadPriceFault_Exception {
+    	
+    	localPort.requestJob(null, "Faro", 4);
+    	  		
+    }
+    @Test(expected = BadLocationFault_Exception.class)
+    public void testNullDestination() throws BadLocationFault_Exception, BadPriceFault_Exception {
+    	
+    	localPort.requestJob("Faro", null, 4);
+    	  		
     }
     @Test(expected = BadLocationFault_Exception.class)
     public void testBadOrigin() throws BadLocationFault_Exception, BadPriceFault_Exception {
     	
     	localPort.requestJob("Tagus", "Faro", 4);
-    	
-   		// assertEquals(expected, actual);
-        // if the assert fails, the test fails
+    	  		
     }
     
     @Test(expected = BadLocationFault_Exception.class)
     public void testBadDestination() throws BadLocationFault_Exception, BadPriceFault_Exception {
     	
     	localPort.requestJob("Faro", "Park", 4);
-    	
-   		// assertEquals(expected, actual);
-        // if the assert fails, the test fails
+    
     }
     
     @Test
     public void testNorthNotImpar() throws BadLocationFault_Exception, BadPriceFault_Exception {
     	
     	assertNull((localPort.requestJob("Porto", "Santarem", 10)));
-    	
-   		// assertEquals(expected, actual);
-        // if the assert fails, the test fails
+    
     }
     
     @Test
@@ -140,8 +153,7 @@ public class TransporterPortTest {
     	
     	assertNull((localPort1.requestJob("Lisboa", "Faro", 10)));
     	
-   		// assertEquals(expected, actual);
-        // if the assert fails, the test fails
+   		
     }
     
     @Test
@@ -149,8 +161,7 @@ public class TransporterPortTest {
     	
     	assertTrue((1 <= (localPort.requestJob("Lisboa", "Faro", 21).getJobPrice())) && ((localPort.requestJob("Lisboa", "Faro", 21).getJobPrice()) <=20));
     	
-   		// assertEquals(expected, actual);
-        // if the assert fails, the test fails
+   	
     }
     
     @Test
@@ -158,8 +169,6 @@ public class TransporterPortTest {
     	
     	assertTrue((1 <= (localPort1.requestJob("Lisboa", "Porto", 20).getJobPrice())) && ((localPort1.requestJob("Lisboa", "Porto", 20).getJobPrice()) <=19));
     	
-   		// assertEquals(expected, actual);
-        // if the assert fails, the test fails
     }
     
     @Test
@@ -167,8 +176,7 @@ public class TransporterPortTest {
     	
     	assertTrue((101 >= (localPort.requestJob("Lisboa", "Faro", 20).getJobPrice())) && ((localPort.requestJob("Lisboa", "Faro", 20).getJobPrice()) >=21));
     	
-   		// assertEquals(expected, actual);
-        // if the assert fails, the test fails
+   	
     }
     
     @Test
@@ -176,8 +184,7 @@ public class TransporterPortTest {
     	
     	assertTrue((101 >= (localPort1.requestJob("Lisboa", "Porto", 21).getJobPrice())) && ((localPort1.requestJob("Lisboa", "Porto", 21).getJobPrice()) >=22));
     	
-   		// assertEquals(expected, actual);
-        // if the assert fails, the test fails
+   		
     }
     
     @Test(expected = BadJobFault_Exception.class)
@@ -185,26 +192,15 @@ public class TransporterPortTest {
     	localPort.requestJob("Lisboa", "Faro", 25);
     	localPort.decideJob("21", true);
     	
-   		// assertEquals(expected, actual);
-        // if the assert fails, the test fails
+   		
     }
-    
-    @Test
-    public void testDefaultId() throws BadLocationFault_Exception, BadPriceFault_Exception, BadJobFault_Exception {
-    	localPort.requestJob("Lisboa", "Faro", 25);
-    	localPort.decideJob("11", true);
-    	
-   		// assertEquals(expected, actual);
-        // if the assert fails, the test fails
-    }
-    
+  
     @Test
     public void testAccept() throws BadLocationFault_Exception, BadPriceFault_Exception, BadJobFault_Exception {
     	localPort.requestJob("Lisboa", "Faro", 25);
     	assertEquals(JobStateView.ACCEPTED,localPort.decideJob("11", true).getJobState() );
     	
-   		// assertEquals(expected, actual);
-        // if the assert fails, the test fails
+   		
     }
     
     @Test
@@ -212,28 +208,58 @@ public class TransporterPortTest {
     	localPort.requestJob("Lisboa", "Faro", 25);
     	assertEquals(JobStateView.REJECTED,localPort.decideJob("11", false).getJobState() );
     	
-   		// assertEquals(expected, actual);
-        // if the assert fails, the test fails
     }
     
     @Test
     public void testDefaultJobStatus() throws BadLocationFault_Exception, BadPriceFault_Exception {
     	final JobView job = localPort.requestJob("Lisboa", "Faro", 25);
     	assertEquals(job,localPort.jobStatus("11"));
-    	
-   		// assertEquals(expected, actual);
-        // if the assert fails, the test fails
+ 
     }
     
     @Test
-    public void testListJobbs() throws BadLocationFault_Exception, BadPriceFault_Exception {
+    public void testBadIdJobStatus() throws BadLocationFault_Exception, BadPriceFault_Exception {
+    	localPort.requestJob("Lisboa", "Faro", 25);
+    	assertNull(localPort.jobStatus("9"));
+ 
+    }
+    
+    @Test
+    public void testListJobs() throws BadLocationFault_Exception, BadPriceFault_Exception {
     	final List<JobView> job = new ArrayList<>();
     	final JobView x = localPort.requestJob("Lisboa", "Faro", 25);
     	job.add(x);
     	assertEquals(job, localPort.listJobs());
-   		// assertEquals(expected, actual);
-        // if the assert fails, the test fails
+   		
     }
     
+    @Test
+    public void testClearList() throws BadLocationFault_Exception, BadPriceFault_Exception {
+    	final List<JobView> job = new ArrayList<>();
+    	localPort.requestJob("Lisboa", "Faro", 25);
+    	localPort.clearJobs();
+    	assertEquals(job, localPort.listJobs());
+   		
+    }
+    @Test
+    public void testTimer() throws BadLocationFault_Exception, BadPriceFault_Exception, BadJobFault_Exception, InterruptedException {
+    	int cont=0;
+    	localPort.requestJob("Lisboa", "Faro", 25);
+    	localPort.decideJob("11", true);
+    	
+    	while((!localPort.jobStatus("11").getJobState().equals(JobStateView.COMPLETED)) ||(System.currentTimeMillis())<16000){
+    		
+    		if((localPort.jobStatus("11").getJobState().equals(JobStateView.ACCEPTED)) && cont==0){
+    			cont++;
+    		}
+    		else if((localPort.jobStatus("11").getJobState().equals(JobStateView.HEADING)) && cont==1){
+    			cont++;
+    		}
+    		else if((localPort.jobStatus("11").getJobState().equals(JobStateView.ONGOING)) && cont==2){
+    			cont++;
+    		}
+    	}
+    	assertEquals(JobStateView.COMPLETED, localPort.jobStatus("11").getJobState());
+    }
     
 }

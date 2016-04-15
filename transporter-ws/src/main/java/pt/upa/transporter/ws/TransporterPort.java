@@ -68,7 +68,6 @@ public class TransporterPort implements TransporterPortType{
 			throws BadLocationFault_Exception, BadPriceFault_Exception {
 		
 		int offer=0;
-		System.out.println(Locais.isEmpty());
 		if(Locais.containsKey(origin) && Locais.containsKey(destination)) {
 			if((Locais.get(origin).equals("Norte") || Locais.get(origin).equals("Centro") 
 					|| Locais.get(origin).equals("Sul"))){
@@ -101,7 +100,7 @@ public class TransporterPort implements TransporterPortType{
 					}
 					
 					else if (price <=10){
-						offer=ThreadLocalRandom.current().nextInt(1,10);
+						offer=ThreadLocalRandom.current().nextInt(2,10);
 					}
 					
 					else{
@@ -126,14 +125,13 @@ public class TransporterPort implements TransporterPortType{
 		}
 		
 		JobView job = new JobView();
-		job.setCompanyName("UpaTransporter"+getId()); //talvez mal
+		job.setCompanyName("UpaTransporter"+getId());
 		job.setJobOrigin(origin);
 		job.setJobDestination(destination);
 		job.setJobIdentifier(getId()+Integer.toString(++cnt));  
 		job.setJobState(JobStateView.PROPOSED);
 		job.setJobPrice(offer);
 		Trabalhos.add(job);
-		System.out.println("preço: "+job.getJobPrice());
 
 		return job;
 	}
@@ -143,10 +141,12 @@ public class TransporterPort implements TransporterPortType{
 		for( JobView i : Trabalhos) {
 			if(i.getJobIdentifier().equals(id)) {
 				if(accept){
+					
 					i.setJobState(JobStateView.ACCEPTED);
 					new Repeater(i);
 				}
 				else {
+					
 					i.setJobState(JobStateView.REJECTED);	
 				}
 				return i;
@@ -175,7 +175,8 @@ public class TransporterPort implements TransporterPortType{
 
 	@Override
 	public void clearJobs() {
-			Trabalhos.clear();
+		Trabalhos.clear();
+		cnt=0;
 	}
 
 	public class Repeater {

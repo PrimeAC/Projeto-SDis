@@ -6,16 +6,18 @@ import static org.junit.Assert.*;
 import org.junit.After;
 
 
+
+
 /**
  *  Unit Test example
  *  
  *  Invoked by Maven in the "test" life-cycle phase
  *  If necessary, should invoke "mock" remote servers 
  */
-public class ExampleTest {
+public class BrokerPortTest {
 
     // static members
-
+	
 
     // one-time initialization and clean-up
 

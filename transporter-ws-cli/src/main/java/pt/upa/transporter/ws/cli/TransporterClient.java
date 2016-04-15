@@ -22,7 +22,6 @@ public class TransporterClient {
 	public TransporterClient(String endpointAddress) {
 		
 		
-		
 		if (endpointAddress == null) {
 			System.out.println("Not found!");
 			return;
@@ -31,8 +30,6 @@ public class TransporterClient {
 		}
 		
 		name = "UpaTransporter" + endpointAddress.charAt(20);
-		
-		System.out.println(name);
 		
 		//System.out.println("Creating stub ...");
 		TransporterService service = new TransporterService();
@@ -43,7 +40,7 @@ public class TransporterClient {
 		Map<String, Object> requestContext = bindingProvider.getRequestContext();
 		requestContext.put(ENDPOINT_ADDRESS_PROPERTY, endpointAddress);
 	}
-	
+
 	public String getCompanyName() {
 		return name;
 	}
@@ -73,41 +70,11 @@ public class TransporterClient {
 		return port.jobStatus(id);
 	}
 	
+	public void clearJobs() {
+		port.clearJobs();
+	}
+	
 	public static void main(String[] args) throws Exception {
-		/*
-		if (args.length < 2) {
-			System.err.println("Argument(s) missing!");
-			System.err.printf("Usage: java %s uddiURL name%n", TransporterClient.class.getName());
-			return;
-		}
-	
-		String uddiURL = args[0];
-		String name = args[1];
-	
-		System.out.printf("Contacting UDDI at %s%n", uddiURL);
-		UDDINaming uddiNaming = new UDDINaming(uddiURL);
-	
-		System.out.printf("Looking for '%s'%n", name);
-		String endpointAddress = uddiNaming.lookup(name);
-	
-		if (endpointAddress == null) {
-			System.out.println("Not found!");
-			return;
-		} else {
-			System.out.printf("Found %s%n", endpointAddress);
-		}
-	
-		System.out.println("Creating stub ...");
-		TransporterService service = new TransporterService();
-		TransporterPortType port = service.getTransporterPort();
-	
-		System.out.println("Setting endpoint address ...");
-		BindingProvider bindingProvider = (BindingProvider) port;
-		Map<String, Object> requestContext = bindingProvider.getRequestContext();
-		requestContext.put(ENDPOINT_ADDRESS_PROPERTY, endpointAddress);
-	
-		String result = port.ping("friend");
-		System.out.println(result);
-		*/
+		
 	}
 }

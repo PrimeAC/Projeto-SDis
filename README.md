@@ -21,9 +21,7 @@ Repositório:
 
 [0] Iniciar sistema operativo
 
-Indicar Windows ou Linux
-*(escolher um dos dois, que esteja disponível nos laboratórios, e depois apagar esta linha)*
-
+Linux
 
 [1] Iniciar servidores de apoio
 
@@ -36,28 +34,23 @@ JUDDI:
 [2] Criar pasta temporária
 
 ```
-cd ...
-mkdir ...
+cd Documents
+mkdir WebServices
 ```
 
 
 [3] Obter código fonte do projeto (versão entregue)
 
 ```
-git clone ...
+git clone https://github.com/tecnico-softeng-distsys-2015/T_50-project.git
 ```
-*(colocar aqui comandos git para obter a versão entregue a partir da tag e depois apagar esta linha)*
+
 
 
 [4] Instalar módulos de bibliotecas auxiliares
 
 ```
 cd uddi-naming
-mvn clean install
-```
-
-```
-cd ...
 mvn clean install
 ```
 
@@ -69,7 +62,7 @@ mvn clean install
 [1] Construir e executar **servidor**
 
 ```
-cd ...-ws
+cd transporter-ws
 mvn clean install
 mvn exec:java
 ```
@@ -77,7 +70,7 @@ mvn exec:java
 [2] Construir **cliente** e executar testes
 
 ```
-cd ...-ws-cli
+cd transporter-ws-cli
 mvn clean install
 ```
 
@@ -91,7 +84,7 @@ mvn clean install
 [1] Construir e executar **servidor**
 
 ```
-cd ...-ws
+cd broker-ws
 mvn clean install
 mvn exec:java
 ```
@@ -100,7 +93,7 @@ mvn exec:java
 [2] Construir **cliente** e executar testes
 
 ```
-cd ...-ws-cli
+cd broker-ws-cli
 mvn clean install
 ```
 

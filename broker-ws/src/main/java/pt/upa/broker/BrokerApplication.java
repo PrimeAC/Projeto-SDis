@@ -54,8 +54,6 @@ public class BrokerApplication {
 			System.out.println("Creating stub(s) ...");
 			for(String i : endpoints) {
 				TransporterClient tc = new TransporterClient(i);
-				System.out.println(i);
-				System.out.println(tc.getPort());
 				transporters.add(tc);
 			}
 			
