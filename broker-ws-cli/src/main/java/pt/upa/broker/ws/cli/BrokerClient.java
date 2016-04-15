@@ -51,10 +51,13 @@ public class BrokerClient {
 		String result = port.ping("friend");
 		System.out.println(result);
 		result = port.requestTransport("Lisboa", "Porto", 50);
-		
+		System.out.println("result1: "+result);
+		result = port.requestTransport("Porto", "Lisboa", 50);
+		System.out.println("result2: "+result);
+		/*
 		while(true){
 			System.out.println(port.viewTransport(result).getState());
-		}
+		}*/
 		
 		
 

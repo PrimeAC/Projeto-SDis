@@ -57,12 +57,8 @@ public class BrokerApplication {
 				System.out.println(i);
 				System.out.println(tc.getPort());
 				transporters.add(tc);
-			}/*
-			for(TransporterClient i : transporters) {
-				JobView result = i.requestJob("Lisboa", "Porto", 30);
-				System.out.println(result);
 			}
-			*/
+			
 			// wait
 			System.out.println("Awaiting connections");
 			System.out.println("Press enter to shutdown");

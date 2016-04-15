@@ -1,7 +1,6 @@
 package pt.upa.transporter;
 
-import java.util.HashMap;
-import java.util.Map;
+
 
 import javax.xml.ws.Endpoint;
 
@@ -18,31 +17,7 @@ public class TransporterApplication {
 			System.err.printf("Usage: java %s uddiURL wsName wsURL%n", TransporterApplication.class.getName());
 			return;
 		}
-		
-		Map<String, String> Locais = new HashMap<>();
-		
-		Locais.put("Porto","Norte");
-		Locais.put("Braga","Norte");
-		Locais.put("Viana do Castelo","Norte");
-		Locais.put("Vila Real","Norte");
-		Locais.put("Bragança","Norte");
-		
-		Locais.put("Lisboa","Centro");
-		Locais.put("Leiria","Centro");
-		Locais.put("Santarem","Centro");
-		Locais.put("Castelo Branco","Centro");
-		Locais.put("Coimbra","Centro");
-		Locais.put("Aveiro","Centro");
-		Locais.put("Viseu","Centro");
-		Locais.put("Guarda","Centro");
-		
-		Locais.put("Setubal","Sul");
-		Locais.put("Evora","Sul");
-		Locais.put("Portalegre","Sul");
-		Locais.put("Beja","Sul");
-		Locais.put("Faro","Sul");
-		
-		TransporterPort.Locais = Locais;
+	
 		
 		String uddiURL = args[0];
 		String Id = args[1];

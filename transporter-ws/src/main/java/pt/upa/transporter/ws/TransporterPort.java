@@ -10,8 +10,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import javax.jws.WebService;
 
-
-
 @WebService(
 	    endpointInterface="pt.upa.transporter.ws.TransporterPortType",
 	    wsdlLocation="transporter.1_0.wsdl",
@@ -25,14 +23,35 @@ public class TransporterPort implements TransporterPortType{
 	
 	public String Id;
 	
-	static public Map<String, String> Locais = new HashMap<>();
+	public Map<String, String> Locais = new HashMap<>();
 	
-	static public int cnt=0;
+	public int cnt=0;
 	
 	private List<JobView> Trabalhos = new ArrayList<>();
 	
 	public TransporterPort(String identifier) {
 		Id=String.valueOf(identifier.charAt(14));
+		
+		Locais.put("Porto","Norte");
+		Locais.put("Braga","Norte");
+		Locais.put("Viana do Castelo","Norte");
+		Locais.put("Vila Real","Norte");
+		Locais.put("Bragança","Norte");
+		
+		Locais.put("Lisboa","Centro");
+		Locais.put("Leiria","Centro");
+		Locais.put("Santarem","Centro");
+		Locais.put("Castelo Branco","Centro");
+		Locais.put("Coimbra","Centro");
+		Locais.put("Aveiro","Centro");
+		Locais.put("Viseu","Centro");
+		Locais.put("Guarda","Centro");
+		
+		Locais.put("Setubal","Sul");
+		Locais.put("Evora","Sul");
+		Locais.put("Portalegre","Sul");
+		Locais.put("Beja","Sul");
+		Locais.put("Faro","Sul");
 	}
 	
 	public String getId() {
@@ -49,70 +68,72 @@ public class TransporterPort implements TransporterPortType{
 			throws BadLocationFault_Exception, BadPriceFault_Exception {
 		
 		int offer=0;
-		if((Locais.get(origin).equals("Norte") || Locais.get(origin).equals("Centro") 
-				|| Locais.get(origin).equals("Sul"))){
+		System.out.println(Locais.isEmpty());
+		if(Locais.containsKey(origin) && Locais.containsKey(destination)) {
+			if((Locais.get(origin).equals("Norte") || Locais.get(origin).equals("Centro") 
+					|| Locais.get(origin).equals("Sul"))){
+				
+				if((Locais.get(destination).equals("Norte") || Locais.get(destination).equals("Centro") 
+						|| Locais.get(destination).equals("Sul"))){
+					
+					/*Origem e destino válidos*/
 			
-			if((Locais.get(destination).equals("Norte") || Locais.get(destination).equals("Centro") 
-					|| Locais.get(destination).equals("Sul"))){
-				
-				/*Origem e destino válidos*/
-		
-		
-				if(price<=0){
-					BadPriceFault faultInfo = new BadPriceFault();
-					faultInfo.setPrice(price);
-					throw new BadPriceFault_Exception("Preço inválido",faultInfo);
-				}
-				
-				else if (((Locais.get(origin).equals("Norte") || Locais.get(destination).equals("Norte")) 
-								&& Integer.parseInt(getId())%2!=0) 
-						|| ((Locais.get(origin).equals("Sul") || Locais.get(destination).equals("Sul")) 
-								&& Integer.parseInt(getId())%2==0)){
-					return null;
-				}
-				
-				else if (price>100){
-					return null;
-				}
-				
-				else if (price <=10){
-					offer=ThreadLocalRandom.current().nextInt(1,10);
-				}
-				
-				else{
-					if ((price%2!=0 && Integer.parseInt(getId())%2!=0) || (price%2==0 && Integer.parseInt(getId())%2==0)) {
-						/*nome impar preço impar ou nome par preço par*/
-		
-						offer=ThreadLocalRandom.current().nextInt(1,price);
+			
+					if(price<0){
+						BadPriceFault faultInfo = new BadPriceFault();
+						faultInfo.setPrice(price);
+						throw new BadPriceFault_Exception("Preço inválido",faultInfo);
 					}
-					else {
-						/*nome par preço impar ou nome impar preço par*/
-		
-						offer = ThreadLocalRandom.current().nextInt(price+1,101);
+					
+					else if(price==0 || price ==1) {
+						offer=0;
+					}
+					
+					else if (((Locais.get(origin).equals("Norte") || Locais.get(destination).equals("Norte")) 
+									&& Integer.parseInt(getId())%2!=0) 
+							|| ((Locais.get(origin).equals("Sul") || Locais.get(destination).equals("Sul")) 
+									&& Integer.parseInt(getId())%2==0)){
+						return null;
+					}
+					
+					else if (price>100){
+						return null;
+					}
+					
+					else if (price <=10){
+						offer=ThreadLocalRandom.current().nextInt(1,10);
+					}
+					
+					else{
+						if ((price%2!=0 && Integer.parseInt(getId())%2!=0) || (price%2==0 && Integer.parseInt(getId())%2==0)) {
+							/*nome impar preço impar ou nome par preço par*/
+			
+							offer=ThreadLocalRandom.current().nextInt(1,price);
+						}
+						else {
+							/*nome par preço impar ou nome impar preço par*/
+			
+							offer = ThreadLocalRandom.current().nextInt(price+1,102);
+						}
 					}
 				}
-			}
-			else {
-				BadLocationFault faultInfo = new BadLocationFault();
-				faultInfo.setLocation(destination);
-				throw new BadLocationFault_Exception("Destino inexistente", faultInfo);
 			}
 		}
 		else {
 			BadLocationFault faultInfo = new BadLocationFault();
 			faultInfo.setLocation(origin);
-			throw new BadLocationFault_Exception("Origem inexistente", faultInfo);
+			throw new BadLocationFault_Exception("Origem/destino inexistente", faultInfo);
 		}
 		
 		JobView job = new JobView();
 		job.setCompanyName("UpaTransporter"+getId()); //talvez mal
 		job.setJobOrigin(origin);
 		job.setJobDestination(destination);
-		job.setJobIdentifier(getId()+Integer.toString(cnt++));  //talvez mal
+		job.setJobIdentifier(getId()+Integer.toString(++cnt));  
 		job.setJobState(JobStateView.PROPOSED);
 		job.setJobPrice(offer);
 		Trabalhos.add(job);
-		System.out.println(job.getJobPrice());
+		System.out.println("preço: "+job.getJobPrice());
 
 		return job;
 	}
