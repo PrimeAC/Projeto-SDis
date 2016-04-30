@@ -19,6 +19,7 @@ import javax.jws.WebService;
 	    serviceName="TransporterService"
 	)
 
+
 public class TransporterPort implements TransporterPortType{
 	
 	public String Id;
@@ -139,7 +140,7 @@ public class TransporterPort implements TransporterPortType{
 	@Override
 	public JobView decideJob(String id, boolean accept) throws BadJobFault_Exception {
 		for( JobView i : Trabalhos) {
-			if(i.getJobIdentifier().equals(id)) {
+			if(i.getJobIdentifier().equals(id) && i.getJobState()==JobStateView.PROPOSED) {
 				if(accept){
 					
 					i.setJobState(JobStateView.ACCEPTED);

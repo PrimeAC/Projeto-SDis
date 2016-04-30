@@ -23,6 +23,7 @@ import pt.upa.transporter.ws.BadLocationFault_Exception;
 	    serviceName="BrokerService"
 	)
 
+
 public class BrokerPort implements BrokerPortType {
 	
 	private List<TransportView> Transportes = new ArrayList<>();
