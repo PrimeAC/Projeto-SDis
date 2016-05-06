@@ -9,6 +9,7 @@ import java.util.TimerTask;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.jws.WebService;
+import javax.jws.HandlerChain;
 
 @WebService(
 	    endpointInterface="pt.upa.transporter.ws.TransporterPortType",
@@ -19,6 +20,7 @@ import javax.jws.WebService;
 	    serviceName="TransporterService"
 	)
 
+@HandlerChain(file="/handler-chain.xml")
 
 public class TransporterPort implements TransporterPortType{
 	
