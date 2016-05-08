@@ -11,7 +11,7 @@ import pt.upa.transporter.ws.BadLocationFault_Exception;
 import pt.upa.transporter.ws.BadPriceFault_Exception;
 import pt.upa.transporter.ws.JobView;
 
-public class ClearIT extends AbstractIT{
+public class clearIT extends AbstractIT{
 	
 	@Test
     public void testClearList() throws BadLocationFault_Exception, BadPriceFault_Exception {

@@ -10,7 +10,7 @@ import pt.upa.transporter.ws.BadPriceFault_Exception;
 import pt.upa.transporter.ws.JobStateView;
 import pt.upa.transporter.ws.JobView;
 
-public class DecideJobIT extends AbstractIT{
+public class decideJobIT extends AbstractIT{
 	
 	@Test(expected = BadJobFault_Exception.class)
     public void testAbsentId() throws BadLocationFault_Exception, BadPriceFault_Exception, BadJobFault_Exception {

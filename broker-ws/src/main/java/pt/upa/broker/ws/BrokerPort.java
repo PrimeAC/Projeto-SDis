@@ -183,6 +183,9 @@ public class BrokerPort implements BrokerPortType {
 
 	@Override
 	public void clearTransports() {
+		for(TransporterClient i : BrokerApplication.getTransportersList()) {
+			i.clearJobs();
+		}
 		Transportes.clear();	
 	}
 }
