@@ -29,7 +29,7 @@
         <ws.name>UpaBroker</ws.name>
         <uddi.url>http://localhost:9090</uddi.url>
     </properties>
-
+ 
     <dependencies>
         <!-- JAX-WS -->
         <dependency>
@@ -47,7 +47,7 @@
         <dependency>
             <groupId>pt.ulisboa.tecnico.sdis</groupId>
             <artifactId>uddi-naming</artifactId>
-            <version>1.0</version>
+            <version>1.1</version>
         </dependency>
         <!-- JMockit - must appear before JUnit -->
         <dependency>
@@ -63,6 +63,7 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
+        <!-- Transporter Client -->
         <dependency>
         	<groupId>pt.upa.t50</groupId>
         	<artifactId>transporter-ws-cli</artifactId>

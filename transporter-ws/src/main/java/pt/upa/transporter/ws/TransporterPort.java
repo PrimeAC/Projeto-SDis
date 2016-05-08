@@ -9,6 +9,7 @@ import java.util.TimerTask;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.jws.WebService;
+import javax.jws.HandlerChain;
 
 @WebService(
 	    endpointInterface="pt.upa.transporter.ws.TransporterPortType",
@@ -18,6 +19,8 @@ import javax.jws.WebService;
 	    targetNamespace="http://ws.transporter.upa.pt/",
 	    serviceName="TransporterService"
 	)
+
+@HandlerChain(file="/handler-chain.xml")
 
 public class TransporterPort implements TransporterPortType{
 	
@@ -139,7 +142,7 @@ public class TransporterPort implements TransporterPortType{
 	@Override
 	public JobView decideJob(String id, boolean accept) throws BadJobFault_Exception {
 		for( JobView i : Trabalhos) {
-			if(i.getJobIdentifier().equals(id)) {
+			if(i.getJobIdentifier().equals(id) && i.getJobState()==JobStateView.PROPOSED) {
 				if(accept){
 					
 					i.setJobState(JobStateView.ACCEPTED);
