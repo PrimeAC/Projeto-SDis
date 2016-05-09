@@ -43,7 +43,7 @@
         </dependency>
         <!-- Handlers -->
         <dependency>
-            <groupId>pt.upa.t50</groupId>
+            <groupId>example</groupId>
             <artifactId>ws-handlers</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>

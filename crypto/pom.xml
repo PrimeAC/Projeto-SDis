@@ -210,6 +210,22 @@
         </profile>
 
         <profile>
+            <!-- Certificate Check X.509 example -->
+            <id>cert-check-x509</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>example.crypto.X509CertificateCheck</mainClass>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
             <!-- Symmetric key writing example -->
             <id>sym-key-write</id>
             <build>
