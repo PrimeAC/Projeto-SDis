@@ -2,12 +2,12 @@
 
 <handler-chains xmlns="http://java.sun.com/xml/ns/javaee">
     <handler-chain>
-        <handler>
-            <handler-class>example.ws.handler.MessageContextHandler</handler-class>
-        </handler>
         <!--handler>
-            <handler-class>example.ws.handler.HeaderHandler</handler-class>
+            <handler-class>example.ws.handler.MessageContextHandler</handler-class>
         </handler-->
+        <handler>
+            <handler-class>example.ws.handler.SignatureHandler</handler-class>
+        </handler>
         <!--handler>
             <handler-class>example.ws.handler.LoggingHandler</handler-class>
         </handler-->

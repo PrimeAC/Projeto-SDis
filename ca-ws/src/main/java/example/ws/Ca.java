@@ -12,6 +12,6 @@ public interface Ca {
 	String sayHello(String name);
 	
 	@WebMethod
-	Certificate getCertificates(String name) throws Exception;
+	byte[] getCertificates(String name) throws Exception;
 
 }

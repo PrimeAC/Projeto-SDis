@@ -2,28 +2,29 @@ package example.ws.cli;
 
 import static javax.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
 import java.security.cert.Certificate;
 import java.util.Map;
 
+import javax.xml.registry.JAXRException;
 import javax.xml.ws.BindingProvider;
 
-// classes generated from WSDL
 import example.ws.Ca;
 import example.ws.CaImplService;
+import example.ws.Exception_Exception;
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
 
 public class CaClient {
-
-	public static void main(String[] args) throws Exception {
-		// Check arguments
-		if (args.length < 2) {
-			System.err.println("Argument(s) missing!");
-			System.err.printf("Usage: java %s uddiURL name%n", CaClient.class.getName());
-			return;
-		}
-
-		String uddiURL = args[0];
-		String name = args[1];
+	
+	private static Ca port;
+	
+	public CaClient() throws JAXRException, Exception_Exception, IOException, ClassNotFoundException {
+		
+		String uddiURL = "http://localhost:8090/ca-ws/endpoint";
+		String name = "Ca";
 
 		System.out.printf("Contacting UDDI at %s%n", uddiURL);
 		UDDINaming uddiNaming = new UDDINaming(uddiURL);
@@ -40,7 +41,7 @@ public class CaClient {
 
 		System.out.println("Creating stub ...");
 		CaImplService service = new CaImplService();
-		Ca port = service.getCaImplPort();
+		port = service.getCaImplPort();
 
 		System.out.println("Setting endpoint address ...");
 		BindingProvider bindingProvider = (BindingProvider) port;
@@ -48,10 +49,33 @@ public class CaClient {
 		requestContext.put(ENDPOINT_ADDRESS_PROPERTY, endpointAddress);
 
 		System.out.println("Remote call ...");
-		String result = port.sayHello("friend");
+		String result = sayHello("friend");
 		System.out.println(result);
-		example.ws.Certificate result1 = port.getCertificates("UpaBroker");
-		System.out.println(result1);
+		byte[] result1 = getCertificates("UpaBroker");
+		System.out.println("bytes:"+result1);
+		
+		ByteArrayInputStream bis = new ByteArrayInputStream(result1);
+		ObjectInput in = null;
+		in = new ObjectInputStream(bis);
+		Certificate certificate = (Certificate) in.readObject();
+		System.out.println(certificate);
 	}
+	
+	
+	public String sayHello(String message){
+		return port.sayHello(message);	
+	}
+	
+	public byte[] getCertificates(String message) throws Exception_Exception{
+		return port.getCertificates(message);	
+	}
+	
+	
+	public static void main(String[] args) throws Exception {
+		
+	}
+	
+	
+	
 
 }

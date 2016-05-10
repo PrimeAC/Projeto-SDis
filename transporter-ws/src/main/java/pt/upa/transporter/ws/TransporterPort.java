@@ -9,6 +9,12 @@ import java.util.TimerTask;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.jws.WebService;
+import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
+
+import example.ws.handler.SignatureHandler;
+
+import javax.annotation.Resource;
 import javax.jws.HandlerChain;
 
 @WebService(
@@ -31,6 +37,11 @@ public class TransporterPort implements TransporterPortType{
 	public int cnt=0;
 	
 	private List<JobView> Trabalhos = new ArrayList<>();
+	
+	@Resource
+	private WebServiceContext webServiceContext;
+	
+	public static final String TRANSPORTER_ENTITY = "UpaTransporter";
 	
 	public TransporterPort(String identifier) {
 		Id=String.valueOf(identifier.charAt(14));
@@ -55,20 +66,30 @@ public class TransporterPort implements TransporterPortType{
 		Locais.put("Portalegre","Sul");
 		Locais.put("Beja","Sul");
 		Locais.put("Faro","Sul");
+		
 	}
 	
 	public String getId() {
 		return Id;
 	}
 	
+	public void setSender(){
+		MessageContext messageContext = webServiceContext.getMessageContext();
+		String newValue = TRANSPORTER_ENTITY+getId();
+		messageContext.put(SignatureHandler.REQUEST_PROPERTY, newValue);
+	}
+	
 	@Override
 	public String ping(String name) {
+		setSender();
 		return "Pong " + name + "!";
 	}
 
 	@Override
 	public JobView requestJob(String origin, String destination, int price)
 			throws BadLocationFault_Exception, BadPriceFault_Exception {
+		
+		setSender();
 		
 		int offer=0;
 		if(Locais.containsKey(origin) && Locais.containsKey(destination)) {
@@ -141,6 +162,9 @@ public class TransporterPort implements TransporterPortType{
 
 	@Override
 	public JobView decideJob(String id, boolean accept) throws BadJobFault_Exception {
+		
+		setSender();
+		
 		for( JobView i : Trabalhos) {
 			if(i.getJobIdentifier().equals(id) && i.getJobState()==JobStateView.PROPOSED) {
 				if(accept){
@@ -163,6 +187,9 @@ public class TransporterPort implements TransporterPortType{
 
 	@Override
 	public JobView jobStatus(String id) {
+		
+		setSender();
+		
 		for( JobView i : Trabalhos) {
 			if(i.getJobIdentifier().equals(id)) {
 				return i;
@@ -173,11 +200,17 @@ public class TransporterPort implements TransporterPortType{
 
 	@Override
 	public List<JobView> listJobs() {
+		
+		setSender();
+		
 		return Trabalhos;
 	}
 
 	@Override
 	public void clearJobs() {
+		
+		setSender();
+		
 		Trabalhos.clear();
 		cnt=0;
 	}

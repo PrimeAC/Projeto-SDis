@@ -54,6 +54,7 @@ public class BrokerApplication {
 			System.out.println("Creating stub(s) ...");
 			for(String i : endpoints) {
 				TransporterClient tc = new TransporterClient(i);
+				tc.ping("ola");
 				transporters.add(tc);
 			}
 			

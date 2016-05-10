@@ -1,44 +1,42 @@
 package example.ws;
 
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+
 import javax.jws.WebService;
 
 @WebService(endpointInterface = "example.ws.Ca")
 public class CaImpl implements Ca {
+	
+	final static String BROKER = "UpaBroker";
+	final static String TRANSPORTER1 = "UpaTransporter1";
+	final static String TRANSPORTER2 = "UpaTransporter2";
 
+	
 	public String sayHello(String name) {
 		return "Hello " + name + "!";
 	}
 	
-	public Certificate getCertificates(String name) throws Exception {
-		final String CERTIFICATE_BROKER_FILE = "keys/UpaBroker/UpaBroker.cer";
-		final String CERTIFICATE_TRANSPORTER1_FILE = "/keys/UpaTransporter1/UpaTransporter1.cer";
-		final String CERTIFICATE_TRANSPORTER2_FILE = "/keys/UpaTransporter2/UpaTransporter2.cer";
+	public byte[] getCertificates(String name) throws Exception {
+		final String KEY_FILE = "keys/";
+
 		Certificate certificate = null;
 		
-		if(name.equals("UpaBroker")){
-			System.out.println("entrei na broker");
-			certificate = readCertificateFile(CERTIFICATE_BROKER_FILE);
-			return certificate;
-		}
-		else if(name.equals("UpaTransporter1")){
-			System.out.println("entrei na t1");
-			certificate = readCertificateFile(CERTIFICATE_TRANSPORTER1_FILE);
-			return certificate;
-		}
-		else if(name.equals("UpaTransporter2")){
-			System.out.println("entrei na t2");
-			certificate = readCertificateFile(CERTIFICATE_TRANSPORTER2_FILE);
-			return certificate;
-		}
-		else {
-			System.out.println("entrei");
-			return certificate;
-		}
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutput out = null;
+		
+		certificate = readCertificateFile(KEY_FILE + name + "/" + name + ".cer");
+		System.out.println(certificate);
+		out = new ObjectOutputStream(bos);   
+		out.writeObject(certificate);
+		byte[] yourBytes = bos.toByteArray();
+		return yourBytes;
 		
 	}
 	
