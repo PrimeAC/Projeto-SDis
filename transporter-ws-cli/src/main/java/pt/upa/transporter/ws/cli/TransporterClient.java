@@ -49,43 +49,43 @@ public class TransporterClient {
 	}
 
 	public String getCompanyName() {
-		requestContext.put(SignatureHandler.REQUEST_PROPERTY, BROKER_ENTITY);
+		requestContext.put(SignatureHandler.CONTEXT_PROPERTY, BROKER_ENTITY);
 		return name;
 	}
 	
 	public TransporterPortType getPort() {
-		requestContext.put(SignatureHandler.REQUEST_PROPERTY, BROKER_ENTITY);
+		requestContext.put(SignatureHandler.CONTEXT_PROPERTY, BROKER_ENTITY);
 		return port;
 	}
 	
 	public String ping(String message){
-		requestContext.put(SignatureHandler.REQUEST_PROPERTY, BROKER_ENTITY);
+		requestContext.put(SignatureHandler.CONTEXT_PROPERTY, BROKER_ENTITY);
 		return port.ping(message);	
 	}
 	
 	public JobView requestJob(String origin, String destination, int price)
 		throws BadLocationFault_Exception, BadPriceFault_Exception {
-		requestContext.put(SignatureHandler.REQUEST_PROPERTY, BROKER_ENTITY);
+		requestContext.put(SignatureHandler.CONTEXT_PROPERTY, BROKER_ENTITY);
 		return port.requestJob(origin, destination, price);
 	}
 	
 	public JobView decideJob(String id, boolean accept) throws BadJobFault_Exception {
-		requestContext.put(SignatureHandler.REQUEST_PROPERTY, BROKER_ENTITY);
+		requestContext.put(SignatureHandler.CONTEXT_PROPERTY, BROKER_ENTITY);
 		return port.decideJob(id, accept);
 	}
 	
 	public List<JobView> listJobs() {
-		requestContext.put(SignatureHandler.REQUEST_PROPERTY, BROKER_ENTITY);
+		requestContext.put(SignatureHandler.CONTEXT_PROPERTY, BROKER_ENTITY);
 		return port.listJobs();
 	}
 	
 	public JobView jobStatus(String id) {
-		requestContext.put(SignatureHandler.REQUEST_PROPERTY, BROKER_ENTITY);
+		requestContext.put(SignatureHandler.CONTEXT_PROPERTY, BROKER_ENTITY);
 		return port.jobStatus(id);
 	}
 	
 	public void clearJobs() {
-		requestContext.put(SignatureHandler.REQUEST_PROPERTY, BROKER_ENTITY);
+		requestContext.put(SignatureHandler.CONTEXT_PROPERTY, BROKER_ENTITY);
 		port.clearJobs();
 	}
 	

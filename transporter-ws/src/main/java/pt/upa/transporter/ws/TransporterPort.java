@@ -76,7 +76,7 @@ public class TransporterPort implements TransporterPortType{
 	public void setSender(){
 		MessageContext messageContext = webServiceContext.getMessageContext();
 		String newValue = TRANSPORTER_ENTITY+getId();
-		messageContext.put(SignatureHandler.REQUEST_PROPERTY, newValue);
+		messageContext.put(SignatureHandler.CONTEXT_PROPERTY, newValue);
 	}
 	
 	@Override

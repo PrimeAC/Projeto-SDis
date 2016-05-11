@@ -48,17 +48,6 @@ public class CaClient {
 		Map<String, Object> requestContext = bindingProvider.getRequestContext();
 		requestContext.put(ENDPOINT_ADDRESS_PROPERTY, endpointAddress);
 
-		System.out.println("Remote call ...");
-		String result = sayHello("friend");
-		System.out.println(result);
-		byte[] result1 = getCertificates("UpaBroker");
-		System.out.println("bytes:"+result1);
-		
-		ByteArrayInputStream bis = new ByteArrayInputStream(result1);
-		ObjectInput in = null;
-		in = new ObjectInputStream(bis);
-		Certificate certificate = (Certificate) in.readObject();
-		System.out.println(certificate);
 	}
 	
 	
