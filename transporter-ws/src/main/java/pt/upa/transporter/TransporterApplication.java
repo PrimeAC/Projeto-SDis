@@ -2,12 +2,21 @@ package pt.upa.transporter;
 
 
 
-import javax.xml.ws.Endpoint;
+import static javax.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY;
 
+import java.util.Map;
+
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Endpoint;
+import javax.xml.ws.handler.MessageContext;
+
+import example.ws.handler.SignatureHandler;
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
 import pt.upa.transporter.ws.TransporterPort;
 
 public class TransporterApplication {
+	
+	private static Map<String, Object> requestContext;
 	
 	public static void main(String[] args) throws Exception {
 		System.out.println(TransporterApplication.class.getSimpleName() + " starting...");
@@ -38,6 +47,8 @@ public class TransporterApplication {
 			System.out.printf("Publishing '%s' to UDDI at %s%n", args[1], uddiURL);
 			uddiNaming = new UDDINaming(uddiURL);
 			uddiNaming.rebind(args[1], url);
+			
+			SignatureHandler.CONTEXT_PROPERTY = Id;
 	
 			// wait
 			System.out.println("Awaiting connections");

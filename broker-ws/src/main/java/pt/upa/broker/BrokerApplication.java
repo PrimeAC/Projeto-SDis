@@ -13,7 +13,8 @@ import pt.upa.transporter.ws.cli.TransporterClient;
 
 public class BrokerApplication {
 	
-	static private List<TransporterClient> transporters = new ArrayList<>();	
+	static private List<TransporterClient> transporters = new ArrayList<>();
+	public static final String BROKER_ENTITY = "UpaBroker";
 	
 	static public List<TransporterClient> getTransportersList(){
 		return transporters;

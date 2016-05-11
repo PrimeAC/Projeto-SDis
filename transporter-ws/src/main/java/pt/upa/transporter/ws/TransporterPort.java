@@ -37,12 +37,12 @@ public class TransporterPort implements TransporterPortType{
 	public int cnt=0;
 	
 	private List<JobView> Trabalhos = new ArrayList<>();
-	
+	/*
 	@Resource
 	private WebServiceContext webServiceContext;
 	
 	public static final String TRANSPORTER_ENTITY = "UpaTransporter";
-	
+	*/
 	public TransporterPort(String identifier) {
 		Id=String.valueOf(identifier.charAt(14));
 		
@@ -72,16 +72,16 @@ public class TransporterPort implements TransporterPortType{
 	public String getId() {
 		return Id;
 	}
-	
+	/*
 	public void setSender(){
 		MessageContext messageContext = webServiceContext.getMessageContext();
 		String newValue = TRANSPORTER_ENTITY+getId();
 		messageContext.put(SignatureHandler.CONTEXT_PROPERTY, newValue);
 	}
-	
+	*/
 	@Override
 	public String ping(String name) {
-		setSender();
+		//setSender();
 		return "Pong " + name + "!";
 	}
 
@@ -89,7 +89,7 @@ public class TransporterPort implements TransporterPortType{
 	public JobView requestJob(String origin, String destination, int price)
 			throws BadLocationFault_Exception, BadPriceFault_Exception {
 		
-		setSender();
+		//setSender();
 		
 		int offer=0;
 		if(Locais.containsKey(origin) && Locais.containsKey(destination)) {
@@ -163,7 +163,7 @@ public class TransporterPort implements TransporterPortType{
 	@Override
 	public JobView decideJob(String id, boolean accept) throws BadJobFault_Exception {
 		
-		setSender();
+		//setSender();
 		
 		for( JobView i : Trabalhos) {
 			if(i.getJobIdentifier().equals(id) && i.getJobState()==JobStateView.PROPOSED) {
@@ -188,7 +188,7 @@ public class TransporterPort implements TransporterPortType{
 	@Override
 	public JobView jobStatus(String id) {
 		
-		setSender();
+		//setSender();
 		
 		for( JobView i : Trabalhos) {
 			if(i.getJobIdentifier().equals(id)) {
@@ -201,7 +201,7 @@ public class TransporterPort implements TransporterPortType{
 	@Override
 	public List<JobView> listJobs() {
 		
-		setSender();
+		//setSender();
 		
 		return Trabalhos;
 	}
@@ -209,7 +209,7 @@ public class TransporterPort implements TransporterPortType{
 	@Override
 	public void clearJobs() {
 		
-		setSender();
+		//setSender();
 		
 		Trabalhos.clear();
 		cnt=0;

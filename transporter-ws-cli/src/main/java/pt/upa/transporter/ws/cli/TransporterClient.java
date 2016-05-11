@@ -37,7 +37,7 @@ public class TransporterClient {
 		name = "UpaTransporter" + endpointAddress.charAt(20);
 		
 		
-		//System.out.println("Creating stub ...");
+		System.out.println("Creating stub ...");
 		TransporterService service = new TransporterService();
 		port = service.getTransporterPort();
 	
@@ -45,47 +45,40 @@ public class TransporterClient {
 		BindingProvider bindingProvider = (BindingProvider) port;
 		requestContext = bindingProvider.getRequestContext();
 		requestContext.put(ENDPOINT_ADDRESS_PROPERTY, endpointAddress);
+		SignatureHandler.CONTEXT_PROPERTY = BROKER_ENTITY;
 		
 	}
 
 	public String getCompanyName() {
-		requestContext.put(SignatureHandler.CONTEXT_PROPERTY, BROKER_ENTITY);
 		return name;
 	}
 	
 	public TransporterPortType getPort() {
-		requestContext.put(SignatureHandler.CONTEXT_PROPERTY, BROKER_ENTITY);
 		return port;
 	}
 	
 	public String ping(String message){
-		requestContext.put(SignatureHandler.CONTEXT_PROPERTY, BROKER_ENTITY);
 		return port.ping(message);	
 	}
 	
 	public JobView requestJob(String origin, String destination, int price)
 		throws BadLocationFault_Exception, BadPriceFault_Exception {
-		requestContext.put(SignatureHandler.CONTEXT_PROPERTY, BROKER_ENTITY);
 		return port.requestJob(origin, destination, price);
 	}
 	
 	public JobView decideJob(String id, boolean accept) throws BadJobFault_Exception {
-		requestContext.put(SignatureHandler.CONTEXT_PROPERTY, BROKER_ENTITY);
 		return port.decideJob(id, accept);
 	}
 	
 	public List<JobView> listJobs() {
-		requestContext.put(SignatureHandler.CONTEXT_PROPERTY, BROKER_ENTITY);
 		return port.listJobs();
 	}
 	
 	public JobView jobStatus(String id) {
-		requestContext.put(SignatureHandler.CONTEXT_PROPERTY, BROKER_ENTITY);
 		return port.jobStatus(id);
 	}
 	
 	public void clearJobs() {
-		requestContext.put(SignatureHandler.CONTEXT_PROPERTY, BROKER_ENTITY);
 		port.clearJobs();
 	}
 	
