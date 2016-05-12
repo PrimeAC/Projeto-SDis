@@ -8,16 +8,21 @@ import javax.xml.ws.Endpoint;
 
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
 import pt.upa.broker.ws.BrokerPort;
-
+import pt.upa.broker.ws.cli.BrokerClient;
 import pt.upa.transporter.ws.cli.TransporterClient;
 
 public class BrokerApplication {
 	
-	static private List<TransporterClient> transporters = new ArrayList<>();
+	private static List<TransporterClient> transporters = new ArrayList<>();
+	private static BrokerClient brokerBackup;
 	public static final String BROKER_ENTITY = "UpaBroker";
 	
-	static public List<TransporterClient> getTransportersList(){
+	public static List<TransporterClient> getTransportersList(){
 		return transporters;
+	}
+	
+	public static BrokerClient getBrokerBackup(){
+		return brokerBackup;
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -36,7 +41,7 @@ public class BrokerApplication {
 		Endpoint endpoint = null;
 		UDDINaming uddiNaming = null;
 		try {
-			BrokerPort port = new BrokerPort();
+			BrokerPort port = new BrokerPort(name);
 			endpoint = Endpoint.create(port);
 
 			// publish endpoint
@@ -58,6 +63,19 @@ public class BrokerApplication {
 				tc.ping("ola");
 				transporters.add(tc);
 			}
+			
+			System.out.println(name);
+			if(name.equals("UpaBroker1")){
+				// connecting with BrokerBackup
+				System.out.printf("Looking for '%s'%n", "UpaBrokerBackup");
+				String endpoint1 = uddiNaming.lookup("UpaBroker2");
+				System.out.println("endpoint" + endpoint1);
+				System.out.println("novo print");
+				BrokerClient bc = new BrokerClient(endpoint1);
+				brokerBackup = bc;
+				
+			}
+			
 			
 			// wait
 			System.out.println("Awaiting connections");

@@ -22,7 +22,7 @@ public class TransporterClient {
 	
 	private Map<String, Object> requestContext;
 	
-	public static final String BROKER_ENTITY = "UpaBroker";
+	public static final String BROKER_ENTITY = "UpaBroker1";
 	
 	public TransporterClient(String endpointAddress) {
 		

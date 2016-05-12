@@ -1,9 +1,12 @@
 package pt.upa.broker.ws;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.jws.WebService;
 import pt.upa.transporter.ws.BadPriceFault_Exception;
@@ -31,6 +34,18 @@ public class BrokerPort implements BrokerPortType {
 	private Map<String, String> Identificadores = new HashMap<>();
 	
 	static private int generator = 0;
+	
+	public String Id;
+	
+	public BrokerPort(String id) {
+		Id=id; 
+		if(id.equals("UpaBroker1")){
+			Timer timer = new Timer();
+			BrokerTimer task = new BrokerTimer();
+			Date date = new Date();
+			timer.scheduleAtFixedRate(task, date, 500);
+		}
+	}
 	
 	@Override
 	public String ping(String name) {
@@ -189,5 +204,24 @@ public class BrokerPort implements BrokerPortType {
 		}
 		Transportes.clear();	
 	}
+	
+	@Override
+	public void updateBackup(TransportView arg1, String arg2) {
+		BrokerApplication.getBrokerBackup().receiveUpdate(arg1,arg2, generator);
+	}
+	
+	@Override
+	public void receiveUpdate(TransportView arg1,String arg2, int arg3) {
+		Transportes.add(arg1);
+		Identificadores.put(arg1.getId(), arg2);
+		generator = arg3;
+	}
+	
+	class BrokerTimer extends TimerTask {
+		public void run() {
+			BrokerApplication.getBrokerBackup().ping("I'm Alive");
+		}
+	}
+
 }
 	

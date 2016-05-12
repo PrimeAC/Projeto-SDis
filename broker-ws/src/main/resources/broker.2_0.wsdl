@@ -117,7 +117,35 @@
                 <xs:sequence />
             </xs:complexType>
             <xs:element name="clearTransportsResponse" type="tns:clearTransportsResponse" />
+
+
+            <xs:complexType name="updateBackup">
+                <xs:sequence>
+                    <xs:element name="arg1" type="tns:transportView" minOccurs="0"/>
+                    <xs:element name="arg2" type="xs:string" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="updateBackup" type="tns:updateBackup" />
         
+            <xs:complexType name="updateBackupResponse">
+                <xs:sequence />
+            </xs:complexType>
+            <xs:element name="updateBackupResponse" type="tns:updateBackupResponse" />
+
+
+            <xs:complexType name="receiveUpdate">
+                <xs:sequence>
+                    <xs:element name="arg1" type="tns:transportView" minOccurs="0"/>
+                    <xs:element name="arg2" type="xs:string" />
+                    <xs:element name="arg3" type="xs:int" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="receiveUpdate" type="tns:receiveUpdate" />
+        
+            <xs:complexType name="receiveUpdateResponse">
+                <xs:sequence />
+            </xs:complexType>
+            <xs:element name="receiveUpdateResponse" type="tns:receiveUpdateResponse" />
         
             <xs:complexType name="UnknownLocationFault">
                 <xs:sequence>
@@ -194,6 +222,20 @@
         <part name="parameters" element="tns:clearTransportsResponse" />
     </message>
 
+    <message name="updateBackup">
+        <part name="parameters" element="tns:updateBackup"/>
+    </message>
+    <message name="updateBackupResponse">
+        <part name="parameters" element="tns:updateBackupResponse"/>
+    </message>
+    
+    <message name="receiveUpdate">
+        <part name="parameters" element="tns:receiveUpdate"/>
+    </message>
+    <message name="receiveUpdateResponse">
+        <part name="parameters" element="tns:receiveUpdateResponse"/>
+    </message>
+
     <message name="UnknownLocationFault">
         <part name="fault" element="tns:UnknownLocationFault" />
     </message>
@@ -266,6 +308,25 @@
                 wsam:Action="http://ws.broker.upa.pt/BrokerPort/clearTransportsResponse"
                 message="tns:clearTransportsResponse" />
         </operation>
+
+        <operation name="updateBackup">
+            <input 
+                wsam:Action="http://ws.broker.upa.pt/BrokerPort/updateBackupRequest" 
+                message="tns:updateBackup"/>
+            <output 
+                wsam:Action="http://ws.broker.upa.pt/BrokerPort/updateBackupResponse" 
+                message="tns:updateBackupResponse"/>
+        </operation>
+
+        <operation name="receiveUpdate">
+            <input 
+                wsam:Action="http://ws.broker.upa.pt/BrokerPort/receiveUpdateRequest" 
+                message="tns:receiveUpdate"/>
+            <output 
+                wsam:Action="http://ws.broker.upa.pt/BrokerPort/receiveUpdateResponse" 
+                message="tns:receiveUpdateResponse"/>
+        </operation>
+
     </portType>
 
     <!-- SOAP/HTTP Binding -->
@@ -339,6 +400,27 @@
                 <soap:body use="literal" />
             </output>
         </operation>
+
+        <operation name="updateBackup">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+
+        <operation name="receiveUpdate">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+
     </binding>
 
     <service name="BrokerService">
