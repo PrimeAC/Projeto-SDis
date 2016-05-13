@@ -101,7 +101,8 @@ public class BrokerApplication {
 						else {
 							System.out.println("Primary Server Failure Detected!");
 							uddiNaming.unbind(name);
-							uddiNaming.rebind("UpaBroker1", url);
+							name = "UpaBroker1";
+							uddiNaming.rebind(name, url);
 							System.out.println("Backup Server Online");
 							break;
 						}
@@ -121,7 +122,8 @@ public class BrokerApplication {
 			e.printStackTrace();
 
 		} finally {
-			if(name.equals("UpaBroker1")){
+			if(name.equals("UpaBroker1") && thread != null){
+				System.out.println("Fiz stop na thread");
 				thread.stop();
 			}
 			try {

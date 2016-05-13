@@ -29,16 +29,17 @@ public class AbstractIT {
     // one-time initialization and clean-up
 
     @BeforeClass
-    public static void oneTimeSetUp() throws JAXRException {
+    public static void oneTimeSetUp() throws JAXRException, InterruptedException {
     	String uddiURL = "http://localhost:9090" ;
-		String name = "UpaBroker";
+		String name = "UpaBroker1";
 
 		System.out.printf("Contacting UDDI at %s%n", uddiURL);
 		UDDINaming uddiNaming = new UDDINaming(uddiURL);
 
 		System.out.printf("Looking for '%s'%n", name);
+		
 		String endpointAddress = uddiNaming.lookup(name);
-
+		
 		if (endpointAddress == null) {
 			System.out.println("Not found!");
 			return;

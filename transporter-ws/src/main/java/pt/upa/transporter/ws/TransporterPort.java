@@ -72,13 +72,7 @@ public class TransporterPort implements TransporterPortType{
 	public String getId() {
 		return Id;
 	}
-	/*
-	public void setSender(){
-		MessageContext messageContext = webServiceContext.getMessageContext();
-		String newValue = TRANSPORTER_ENTITY+getId();
-		messageContext.put(SignatureHandler.CONTEXT_PROPERTY, newValue);
-	}
-	*/
+
 	@Override
 	public String ping(String name) {
 		//setSender();
@@ -124,7 +118,7 @@ public class TransporterPort implements TransporterPortType{
 					}
 					
 					else if (price <=10){
-						offer=ThreadLocalRandom.current().nextInt(2,10);
+						offer=ThreadLocalRandom.current().nextInt(2,price);
 					}
 					
 					else{

@@ -199,19 +199,22 @@ public class BrokerPort implements BrokerPortType {
 		for(TransporterClient i : BrokerApplication.getTransportersList()) {
 			i.clearJobs();
 		}
-		Transportes.clear();	
-		BrokerApplication.getBrokerBackup().clearTransports();
+		Transportes.clear();
+		if(Id.equals("UpaBroker1")){
+			BrokerApplication.getBrokerBackup().clearTransports();
+		}
 	}
 	
 	@Override
 	public void updateBackup(TransportView arg1, String arg2) {
-		if(Id.equals("1")){
+		if(Id.equals("UpaBroker1")){
 			BrokerApplication.getBrokerBackup().receiveUpdate(arg1,arg2, generator);
 		}
 	}
 	
 	@Override
 	public void receiveUpdate(TransportView arg1,String arg2, int arg3) {
+		System.out.println("recebi um transporte:"+arg1.origin+arg1.destination+arg1.getState());
 		Transportes.add(arg1);
 		Identificadores.put(arg1.getId(), arg2);
 		generator = arg3;
