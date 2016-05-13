@@ -2,8 +2,12 @@ package pt.upa.broker;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import javax.xml.registry.JAXRException;
 import javax.xml.ws.Endpoint;
 
 import pt.ulisboa.tecnico.sdis.ws.uddi.UDDINaming;
@@ -11,13 +15,15 @@ import pt.upa.broker.ws.BrokerPort;
 import pt.upa.broker.ws.cli.BrokerClient;
 import pt.upa.transporter.ws.cli.TransporterClient;
 
-public class BrokerApplication {
+public class BrokerApplication extends Thread{
 	
 	private static List<TransporterClient> transporters = new ArrayList<>();
 	private static BrokerClient brokerBackup;
-	public static final String BROKER_ENTITY = "UpaBroker";
-	public static boolean alive = false;
-	public static int flag = 0;
+	public static boolean alive = true;
+	private final static String UPA_BROKER1_NAME = "UpaBroker1";
+	private final static String UPA_BROKER1_URL = "http://localhost:8091/broker-ws/endpoint";
+	private final static String UPA_BROKER2_NAME = "UpaBroker2";
+	private final static String UDDI_URL = "http://localhost:9090";
 	
 	public static List<TransporterClient> getTransportersList(){
 		return transporters;
@@ -25,6 +31,16 @@ public class BrokerApplication {
 	
 	public static BrokerClient getBrokerBackup(){
 		return brokerBackup;
+	}
+	
+	public static void BrokerReplace() throws JAXRException{
+		
+		UDDINaming uddiNaming = new UDDINaming(UDDI_URL);
+		uddiNaming.rebind(UPA_BROKER1_NAME, UPA_BROKER1_URL);
+	}
+	
+	public void run(){
+		
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -35,7 +51,7 @@ public class BrokerApplication {
 			System.err.printf("Usage: java %s uddiURL wsName wsURL%n", BrokerApplication.class.getName());
 			return;
 		}
-
+		
 		String uddiURL = args[0];
 		String name = args[1];
 		String url = args[2];
@@ -43,12 +59,12 @@ public class BrokerApplication {
 		Endpoint endpoint = null;
 		UDDINaming uddiNaming = null;
 		Thread thread = null;
+		
 		try {
 			BrokerPort port = new BrokerPort(name);
 			endpoint = Endpoint.create(port);
 
 			// publish endpoint
-
 			System.out.printf("Starting %s%n", url);
 			endpoint.publish(url);
 
@@ -57,60 +73,26 @@ public class BrokerApplication {
 			uddiNaming = new UDDINaming(uddiURL);
 			uddiNaming.rebind(name, url);
 			
-			
 			// connecting with transporter
 			System.out.printf("Looking for '%s'%n", "UpaTransporters");
 			Collection<String> endpoints = uddiNaming.list("UpaTransporter%");
 			
 			System.out.println("Creating stub(s) ...");
 			for(String i : endpoints) {
-				final TransporterClient tc = new TransporterClient(i);
+				TransporterClient tc = new TransporterClient(i);
 				tc.ping("ola");
 				transporters.add(tc);
 			}
-
+			
 			if(name.equals("UpaBroker1")){
-				
 				// connecting with BrokerBackup
 				System.out.printf("Looking for '%s'%n", "UpaBrokerBackup");
 				String endpoint1 = uddiNaming.lookup("UpaBroker2");
+				System.out.println("endpoint" + endpoint1);
+				System.out.println("novo print");
 				BrokerClient bc = new BrokerClient(endpoint1);
-				brokerBackup = bc;
-				thread = new Thread(new Runnable() {
-					public void run() {
-						while(true) {
-							bc.imAlive();
-							try {
-								Thread.sleep(500);
-							} catch (InterruptedException e) {
-								System.out.printf("Caught exception: %s%n", e);
-								e.printStackTrace();		
-							}
-						}	
-					}
-				});
 			}
-			else {
-				while(true) {
-					Thread.sleep(1);
-					if(flag==1){
-						if(alive != false) {
-							alive = false;
-							Thread.sleep(600);
-						}
-						else {
-							System.out.println("Primary Server Failure Detected!");
-							uddiNaming.unbind(name);
-							uddiNaming.rebind("UpaBroker1", url);
-							System.out.println("Backup Server Online");
-							break;
-						}
-					}
-				}
-			}
-			if(thread != null) {
-				thread.start();
-			}
+			
 			// wait
 			System.out.println("Awaiting connections");
 			System.out.println("Press enter to shutdown");
@@ -121,9 +103,6 @@ public class BrokerApplication {
 			e.printStackTrace();
 
 		} finally {
-			if(name.equals("UpaBroker1")){
-				thread.stop();
-			}
 			try {
 				if (endpoint != null) {
 					// stop endpoint

@@ -39,12 +39,6 @@ public class BrokerPort implements BrokerPortType {
 	
 	public BrokerPort(String id) {
 		Id=id; 
-		if(id.equals("UpaBroker1")){
-			Timer timer = new Timer();
-			BrokerTimer task = new BrokerTimer();
-			Date date = new Date();
-			timer.scheduleAtFixedRate(task, date, 500);
-		}
 	}
 	
 	@Override
@@ -102,6 +96,9 @@ public class BrokerPort implements BrokerPortType {
 				trans.setTransporterCompany(finalJob.getCompanyName());
 				Identificadores.put(trans.getId(), finalJob.getJobIdentifier());
 				Transportes.add(trans);
+				
+				updateBackup(trans,finalJob.getJobIdentifier());
+				
 				
 				if(trans.getPrice()>price){//verifica se a melhor oferta foi ACIMA do preço pedido
 					finalCompany.decideJob(finalJob.getJobIdentifier(), false);
@@ -174,7 +171,7 @@ public class BrokerPort implements BrokerPortType {
 				}
 			}
 		}
-	
+		updateBackup(transport,jobId);
 		return transport;
 	}
 
@@ -203,11 +200,14 @@ public class BrokerPort implements BrokerPortType {
 			i.clearJobs();
 		}
 		Transportes.clear();	
+		BrokerApplication.getBrokerBackup().clearTransports();
 	}
 	
 	@Override
 	public void updateBackup(TransportView arg1, String arg2) {
-		BrokerApplication.getBrokerBackup().receiveUpdate(arg1,arg2, generator);
+		if(Id.equals("1")){
+			BrokerApplication.getBrokerBackup().receiveUpdate(arg1,arg2, generator);
+		}
 	}
 	
 	@Override
@@ -217,10 +217,10 @@ public class BrokerPort implements BrokerPortType {
 		generator = arg3;
 	}
 	
-	class BrokerTimer extends TimerTask {
-		public void run() {
-			BrokerApplication.getBrokerBackup().ping("I'm Alive");
-		}
+	@Override
+	public void imAlive() {
+		BrokerApplication.alive = true;
+		BrokerApplication.flag = 1;
 	}
 
 }

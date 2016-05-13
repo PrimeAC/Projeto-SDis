@@ -24,7 +24,6 @@ public class BrokerClient {
 	
 	public BrokerClient(String endpointAddress) {
 	
-		System.out.println(endpointAddress);
 		if (endpointAddress == null) {
 			System.out.println("Not found!");
 			return;
@@ -51,6 +50,14 @@ public class BrokerClient {
 	
 	public void receiveUpdate(TransportView arg1,String arg2, int arg3) {
 		port.receiveUpdate(arg1, arg2, arg3);
+	}
+	
+	public void imAlive() {
+		port.imAlive();
+	}
+	
+	public void clearTransports() {
+		port.clearTransports();
 	}
 	
 	public static void main(String[] args) throws Exception {
