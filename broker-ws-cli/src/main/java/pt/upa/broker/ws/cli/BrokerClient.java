@@ -38,7 +38,7 @@ public class BrokerClient {
 		BrokerService service = new BrokerService();
 		port = service.getBrokerPort();
 	
-		//System.out.println("Setting endpoint address ...");
+		System.out.println("Setting endpoint address ...");
 		BindingProvider bindingProvider = (BindingProvider) port;
 		requestContext = bindingProvider.getRequestContext();
 		requestContext.put(ENDPOINT_ADDRESS_PROPERTY, endpointAddress);

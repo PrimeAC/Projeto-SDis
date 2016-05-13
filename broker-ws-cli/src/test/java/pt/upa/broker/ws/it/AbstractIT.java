@@ -35,7 +35,7 @@ public class AbstractIT {
 
 		System.out.printf("Contacting UDDI at %s%n", uddiURL);
 		UDDINaming uddiNaming = new UDDINaming(uddiURL);
-
+		
 		System.out.printf("Looking for '%s'%n", name);
 		
 		String endpointAddress = uddiNaming.lookup(name);
@@ -47,18 +47,20 @@ public class AbstractIT {
 			System.out.printf("Found %s%n", endpointAddress);
 		}
 
-		System.out.println("Creating stub ...");
+		System.out.println("Creating stubs ...");
 		BrokerService service = new BrokerService();
 		port = service.getBrokerPort();
-
-		System.out.println("Setting endpoint address ...");
+		
+		System.out.println("Setting endpoint address for Broker 1 ...");
 		BindingProvider bindingProvider = (BindingProvider) port;
 		Map<String, Object> requestContext = bindingProvider.getRequestContext();
 		requestContext.put(ENDPOINT_ADDRESS_PROPERTY, endpointAddress);
+		
     }
 
     @AfterClass
     public static void oneTimeTearDown() {
+    	port.clearTransports();
     	port=null;
     }
 
@@ -70,6 +72,7 @@ public class AbstractIT {
 
     @Before
     public void setUp() {
+    	
     }
 
     @After

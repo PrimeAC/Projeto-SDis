@@ -42,6 +42,7 @@ mkdir WebServices
 [3] Obter código fonte do projeto (versão entregue)
 
 ```
+fénix
 git clone https://github.com/tecnico-softeng-distsys-2015/T_50-project.git
 ```
 
@@ -52,7 +53,30 @@ git clone https://github.com/tecnico-softeng-distsys-2015/T_50-project.git
 ```
 cd uddi-naming
 mvn clean install
+cd ws-handlers
+mvn clean install
 ```
+
+-------------------------------------------------------------------------------
+
+### Serviço CA
+
+[1] Construir e executar **servidor**
+
+```
+cd ca-ws
+mvn clean install
+mvn exec:java
+```
+
+[2] Construir **cliente** e executar tarefas
+
+```
+cd ca-ws-cli
+mvn clean install
+```
+
+...
 
 
 -------------------------------------------------------------------------------
@@ -67,7 +91,14 @@ mvn clean install
 mvn exec:java
 ```
 
-[2] Construir **cliente** e executar testes
+[2] Construir e executar **servidor**
+
+```
+cd transporter-ws
+mvn -Dws.i=2 exec:java
+```
+
+[3] Construir **cliente** e executar testes
 
 ```
 cd transporter-ws-cli
@@ -81,16 +112,23 @@ mvn clean install
 
 ### Serviço BROKER
 
-[1] Construir e executar **servidor**
+[1] Construir e executar **servidorBackup**
 
 ```
 cd broker-ws
 mvn clean install
+mvn -Dws.i=2 exec:java
+```
+
+[2] Construir e executar **servidorPrimário**
+
+```
+cd broker-ws
 mvn exec:java
 ```
 
 
-[2] Construir **cliente** e executar testes
+[3] Construir **cliente** e executar testes
 
 ```
 cd broker-ws-cli

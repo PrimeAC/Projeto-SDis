@@ -15,9 +15,11 @@ public class BrokerApplication {
 	
 	private static List<TransporterClient> transporters = new ArrayList<>();
 	private static BrokerClient brokerBackup;
-	public static final String BROKER_ENTITY = "UpaBroker";
+	public static final String BROKER1_ENTITY = "UpaBroker1";
+	public static final String BROKER2_ENTITY = "UpaBroker2";
 	public static boolean alive = false;
 	public static int flag = 0;
+	public static int flag1 = 0;
 	
 	public static List<TransporterClient> getTransportersList(){
 		return transporters;
@@ -69,11 +71,11 @@ public class BrokerApplication {
 				transporters.add(tc);
 			}
 
-			if(name.equals("UpaBroker1")){
+			if(name.equals(BROKER1_ENTITY)){
 				
 				// connecting with BrokerBackup
 				System.out.printf("Looking for '%s'%n", "UpaBrokerBackup");
-				String endpoint1 = uddiNaming.lookup("UpaBroker2");
+				String endpoint1 = uddiNaming.lookup(BROKER2_ENTITY);
 				BrokerClient bc = new BrokerClient(endpoint1);
 				brokerBackup = bc;
 				thread = new Thread(new Runnable() {
@@ -91,6 +93,7 @@ public class BrokerApplication {
 				});
 			}
 			else {
+				System.out.println("Standing by...");
 				while(true) {
 					Thread.sleep(1);
 					if(flag==1){
@@ -101,7 +104,7 @@ public class BrokerApplication {
 						else {
 							System.out.println("Primary Server Failure Detected!");
 							uddiNaming.unbind(name);
-							name = "UpaBroker1";
+							name = BROKER1_ENTITY;
 							uddiNaming.rebind(name, url);
 							System.out.println("Backup Server Online");
 							break;
@@ -122,8 +125,7 @@ public class BrokerApplication {
 			e.printStackTrace();
 
 		} finally {
-			if(name.equals("UpaBroker1") && thread != null){
-				System.out.println("Fiz stop na thread");
+			if(name.equals(BROKER1_ENTITY) && thread != null){
 				thread.stop();
 			}
 			try {

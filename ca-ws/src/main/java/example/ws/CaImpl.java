@@ -32,7 +32,6 @@ public class CaImpl implements Ca {
 		ObjectOutput out = null;
 		
 		certificate = readCertificateFile(KEY_FILE + name + "/" + name + ".cer");
-		System.out.println(certificate);
 		out = new ObjectOutputStream(bos);   
 		out.writeObject(certificate);
 		byte[] yourBytes = bos.toByteArray();
@@ -62,8 +61,6 @@ public class CaImpl implements Ca {
 		if (bis.available() > 0) {
 			Certificate cert = cf.generateCertificate(bis);
 			return cert;
-			// It is possible to print the content of the certificate file:
-			// System.out.println(cert.toString());
 		}
 		bis.close();
 		fis.close();

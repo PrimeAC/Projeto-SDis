@@ -41,6 +41,10 @@ public class BrokerPort implements BrokerPortType {
 		Id=id; 
 	}
 	
+	public Map<String,String> getMap(){
+		return Identificadores;
+	}
+	
 	@Override
 	public String ping(String name) {
 		return "Pong " + name + "!";
@@ -214,7 +218,6 @@ public class BrokerPort implements BrokerPortType {
 	
 	@Override
 	public void receiveUpdate(TransportView arg1,String arg2, int arg3) {
-		System.out.println("recebi um transporte:"+arg1.origin+arg1.destination+arg1.getState());
 		Transportes.add(arg1);
 		Identificadores.put(arg1.getId(), arg2);
 		generator = arg3;
