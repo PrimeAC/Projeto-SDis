@@ -14,7 +14,7 @@ import pt.upa.broker.ws.UnavailableTransportPriceFault_Exception;
 import pt.upa.broker.ws.UnknownLocationFault_Exception;
 
 public class clearTransportsIT extends AbstractIT {
-	
+	/*
 	@Test
     public void testClearList() throws InvalidPriceFault_Exception, UnavailableTransportFault_Exception, 
     	UnavailableTransportPriceFault_Exception, UnknownLocationFault_Exception{
@@ -22,6 +22,6 @@ public class clearTransportsIT extends AbstractIT {
     	port.requestTransport("Lisboa", "Faro", 25);
     	port.clearTransports();
     	assertEquals(trans, port.listTransports());
-    }
+    }*/
 
 }

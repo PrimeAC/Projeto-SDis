@@ -91,6 +91,8 @@ public class SignatureHandler implements SOAPHandler<SOAPMessageContext> {
         try {
             if (outboundElement.booleanValue()) { //Outbound message
             	UUID id = UUID.randomUUID();
+
+            	System.out.println("OUT");
             	
             	String propertyValue = CONTEXT_PROPERTY;
             	SOAPMessage msg = smc.getMessage();
@@ -112,6 +114,11 @@ public class SignatureHandler implements SOAPHandler<SOAPMessageContext> {
 				
                 String messageBody = mb.toString();
                 byte[] plainBytes = messageBody.getBytes();
+
+                System.out.println("Body in Text");
+                System.out.println(messageBody);
+                System.out.println("Body in bytes");
+                System.out.println(printHexBinary(plainBytes));
                 
               //add header
                 SOAPHeader sh = se.getHeader();
@@ -140,17 +147,27 @@ public class SignatureHandler implements SOAPHandler<SOAPMessageContext> {
                 byte[] digitalSignature = makeDigitalSignature(plainBytes, getPrivateKeyFromKeystore(KEYSTORE_PATH + propertyValue+".jks",
                         KEYSTORE_PASSWORD.toCharArray(), propertyValue, KEY_PASSWORD.toCharArray()));
 
+                System.out.println("Digest in bytes");
+                System.out.println(printHexBinary(digitalSignature));
+
                 // add header element body (Digest)
                 Name name = se.createName("myHeader", "d", "http://demo");
                 SOAPHeaderElement element = sh.addHeaderElement(name);
                 String valueString = printBase64Binary(digitalSignature);
                 element.addTextNode(valueString);
+
+                // data modification
                 
+                /*
+                System.out.println("CORRUPTING MESSAGE!");
+                plainBytes[3]=12;
+                System.out.println("Tampered bytes: (look closely around the 7th hex character)");
+				System.out.println(printHexBinary(plainBytes));
+				*/
                 
-                
-				
             } else { //Inbound message
-            	
+            	System.out.println("IN");
+
             	String myValue = CONTEXT_PROPERTY;
             	SOAPMessage msg = smc.getMessage();
 				SOAPPart sp = msg.getSOAPPart();
@@ -223,6 +240,14 @@ public class SignatureHandler implements SOAPHandler<SOAPMessageContext> {
 				
                 String messageBody = mb.toString();
                 byte[] plainBytes = messageBody.getBytes();
+
+                System.out.println("Digest in bytes");
+                System.out.println(printHexBinary(digitalSignature));
+
+                System.out.println("Body in Text");
+                System.out.println(messageBody);
+                System.out.println("Body in bytes");
+                System.out.println(printHexBinary(plainBytes));
 
             	//get source certificate and verify it with CA certificate
             	File f = new File(".");

@@ -12,7 +12,12 @@ import javax.xml.ws.BindingProvider;
 // classes generated from WSDL
 import pt.upa.broker.ws.BrokerPortType;
 import pt.upa.broker.ws.BrokerService;
+import pt.upa.broker.ws.InvalidPriceFault_Exception;
 import pt.upa.broker.ws.TransportView;
+import pt.upa.broker.ws.UnavailableTransportFault_Exception;
+import pt.upa.broker.ws.UnavailableTransportPriceFault_Exception;
+import pt.upa.broker.ws.UnknownLocationFault_Exception;
+import pt.upa.broker.ws.UnknownTransportFault_Exception;
 
 public class BrokerClient {
 	
@@ -46,6 +51,20 @@ public class BrokerClient {
 	
 	public String ping(String message){
 		return port.ping(message);	
+	}
+	
+	public String requestTransport(String origin, String destination, int price)
+			throws InvalidPriceFault_Exception, UnavailableTransportFault_Exception,
+			UnavailableTransportPriceFault_Exception, UnknownLocationFault_Exception{
+		return port.requestTransport(origin, destination, price);
+	}
+	
+	public List<TransportView> listTransports() {
+		return port.listTransports();
+	}
+	
+	public TransportView viewTransport(String id) throws UnknownTransportFault_Exception {
+		return port.viewTransport(id);
 	}
 	
 	public void receiveUpdate(TransportView arg1,String arg2, int arg3) {

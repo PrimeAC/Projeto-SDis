@@ -25,7 +25,7 @@ public class AbstractIT {
 
     // static members
 	
-	protected static BrokerPortType port;
+	protected static BrokerClient port;
     // one-time initialization and clean-up
 
     @BeforeClass
@@ -40,27 +40,13 @@ public class AbstractIT {
 		
 		String endpointAddress = uddiNaming.lookup(name);
 		
-		if (endpointAddress == null) {
-			System.out.println("Not found!");
-			return;
-		} else {
-			System.out.printf("Found %s%n", endpointAddress);
-		}
-
-		System.out.println("Creating stubs ...");
-		BrokerService service = new BrokerService();
-		port = service.getBrokerPort();
-		
-		System.out.println("Setting endpoint address for Broker 1 ...");
-		BindingProvider bindingProvider = (BindingProvider) port;
-		Map<String, Object> requestContext = bindingProvider.getRequestContext();
-		requestContext.put(ENDPOINT_ADDRESS_PROPERTY, endpointAddress);
+		port = new BrokerClient(endpointAddress);
 		
     }
 
     @AfterClass
     public static void oneTimeTearDown() {
-    	port.clearTransports();
+    	//port.clearTransports();
     	port=null;
     }
 

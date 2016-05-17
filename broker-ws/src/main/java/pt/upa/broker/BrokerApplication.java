@@ -67,7 +67,9 @@ public class BrokerApplication {
 			System.out.println("Creating stub(s) ...");
 			for(String i : endpoints) {
 				final TransporterClient tc = new TransporterClient(i);
-				tc.ping("ola");
+				if(name.equals("UpaBroker1")){
+					tc.ping("ola");
+				}
 				transporters.add(tc);
 			}
 
@@ -106,6 +108,7 @@ public class BrokerApplication {
 							uddiNaming.unbind(name);
 							name = BROKER1_ENTITY;
 							uddiNaming.rebind(name, url);
+							port.Id=name;
 							System.out.println("Backup Server Online");
 							break;
 						}

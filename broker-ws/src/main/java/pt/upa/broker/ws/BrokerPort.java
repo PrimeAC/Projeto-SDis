@@ -217,7 +217,8 @@ public class BrokerPort implements BrokerPortType {
 	}
 	
 	@Override
-	public void receiveUpdate(TransportView arg1,String arg2, int arg3) {
+	public void receiveUpdate(TransportView arg1,String arg2, int arg3){
+		System.out.println("RECEIVE UPDATE");
 		Transportes.add(arg1);
 		Identificadores.put(arg1.getId(), arg2);
 		generator = arg3;
