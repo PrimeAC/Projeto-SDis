@@ -155,16 +155,28 @@ public class SignatureHandler implements SOAPHandler<SOAPMessageContext> {
                 SOAPHeaderElement element = sh.addHeaderElement(name);
                 String valueString = printBase64Binary(digitalSignature);
                 element.addTextNode(valueString);
-
-                // data modification
                 
+                // data modification
                 /*
                 System.out.println("CORRUPTING MESSAGE!");
                 plainBytes[3]=12;
                 System.out.println("Tampered bytes: (look closely around the 7th hex character)");
 				System.out.println(printHexBinary(plainBytes));
+				
+				Certificate certificate = readCertificateFile("UpaBroker.cer");
+				PublicKey publicKey = certificate.getPublicKey();
+				
+				boolean isValid = verifyDigitalSignature(digitalSignature, plainBytes, publicKey);
+				
+				System.out.println("Verifying again ...");
+				isValid = verifyDigitalSignature(digitalSignature, plainBytes, publicKey);
+
+				if (isValid) {
+					System.out.println("The digital signature is valid");
+				} else {
+					System.out.println("The digital signature is NOT valid");
+				}
 				*/
-                
             } else { //Inbound message
             	System.out.println("IN");
 

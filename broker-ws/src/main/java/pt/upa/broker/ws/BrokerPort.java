@@ -211,7 +211,9 @@ public class BrokerPort implements BrokerPortType {
 	
 	@Override
 	public void updateBackup(TransportView arg1, String arg2) {
+		
 		if(Id.equals("UpaBroker1")){
+			System.out.println(generator);
 			BrokerApplication.getBrokerBackup().receiveUpdate(arg1,arg2, generator);
 		}
 	}
@@ -222,6 +224,7 @@ public class BrokerPort implements BrokerPortType {
 		Transportes.add(arg1);
 		Identificadores.put(arg1.getId(), arg2);
 		generator = arg3;
+		System.out.println(generator);
 	}
 	
 	@Override

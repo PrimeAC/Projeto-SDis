@@ -21,6 +21,7 @@ public class listTransportsIT extends AbstractIT {
     public void testlistTransports() throws InvalidPriceFault_Exception, UnavailableTransportFault_Exception, 
     	UnavailableTransportPriceFault_Exception, UnknownLocationFault_Exception, UnknownTransportFault_Exception{
     	final List<TransportView> trans = new ArrayList<>();
+    	System.out.println(port);
     	final String id = port.requestTransport("Lisboa", "Faro", 25);
     	trans.add(port.viewTransport(id));
     	assertEquals(trans.get(0).getTransporterCompany(), port.listTransports().get(0).getTransporterCompany());

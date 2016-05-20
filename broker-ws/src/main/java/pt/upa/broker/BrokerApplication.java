@@ -110,6 +110,7 @@ public class BrokerApplication {
 							uddiNaming.rebind(name, url);
 							port.Id=name;
 							System.out.println("Backup Server Online");
+							System.out.println(port.listTransports());
 							break;
 						}
 					}
