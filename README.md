@@ -1,4 +1,6 @@
-# Projeto de Sistemas Distribuídos 2015-2016 #
+# Upa Transportes
+
+Projeto de Sistemas Distribuídos 2015-2016 
 
 Grupo de SD 50 - Campus Taguspark
 
@@ -7,10 +9,6 @@ Afonso Caetano 82539 afonso.caetano@tecnico.ulisboa.pt
 Bruno Santos 82053 bruno.o.santos@tecnico.ulisboa.pt
 
 Ricardo Pereira 82010 ricardo.moreira.pereira@tecnico.ulisboa.pt
-
-
-Repositório:
-[tecnico-softeng-distsys-2015/T_50-project](https://github.com/tecnico-softeng-distsys-2015/T_50-project/)
 
 -------------------------------------------------------------------------------
 
